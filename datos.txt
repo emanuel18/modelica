@@ -1,0 +1,182 @@
+Estructura: 
+# for i in 1:N loop
+#   a[i]-b[i]+c+d[4]+a[1]=8;         //fi
+# end for;
+
+fi => {
+    ran => { # todos los rangos tienen esta estructura, en este caso como es i va 0
+      0 => { 
+        init => 1,
+        end  => N,
+        vars => [a,b] # aca estan las variables que dependen de i, sino esta aca es porque debe 
+                      # considerarse  una constante
+      }
+    },
+    var_info => {
+        a => {
+            ran      => "",   # si es vacio significa que tiene el mismo ran de la eq, caso contrario se detalla el ran de la var
+            constant => [1,3] # esto indica que ademas de estar en el for tiene una variable constante que es a[1] y a[3]
+        },
+        b => {
+            ran      => "",
+            constant => ""
+        },
+        c => { # al no estar dentro de vars significa que es una variable que no depende de i, es una constante c
+            ran      => "",
+            constant => ""
+        },
+        d => { # al no estar dentro de vars significa que es una variable que no depende de i, es una constante d[4]
+            ran      => "",
+            constant => [4]
+        }
+    }, 
+},
+
+my $internal_macro_node_ordered = {
+    ran        => {
+        init => 1,
+        end  => N,
+        vars => [a,b] # variables involucradas
+    },
+    equation   => [f,g],
+    var_info  => {
+      a => [X],# si esta variable esta dentro de ran.vars, los valores que estan dentro del arreglo 
+               # son los otros valores que asume en la ec + a[X]
+      b => "",
+      c => "",
+      d => [4] # al no estar en ran.vars significa que solo d[4] esta en la ec
+    },
+   'index' => { # estos son los indices que uso para resolver en el for
+                'a' => 0,
+                'b' => 0
+              },
+}
+
+# for i in 1:N-1 loop
+#   a[i]-b[i]+a[i+1]-c+d[5]-a[1]+b[1]=8;         //fi
+# end for;
+fi => {
+    ran => { # rango del for
+      0 => {
+        init => 1,
+        end  => N,
+        vars => [a,b]
+      }
+    },
+    var_info => {
+        a => {
+            ran   => {
+                0 => {# si esto es vacio uso el rango por defecto, sino tomo este, 0 es i
+                    init => 1,
+                    end  => N,
+                },
+                1 => {# esto quiere decir que el indice es i+1
+                    init => 2,
+                    end  => N+1,
+                },
+            },
+            constant => [1]
+        },
+        b => {
+            ran      => "",
+            constant => [1]
+        },
+        c => "",
+        d => {
+            constant => [1]
+        },
+    },
+},
+my $causalized = {
+    ran        => {
+        init => N-1,
+        end  => 1,
+        next => 1,
+        vars => [a,b]
+    },
+    equations  => [fi]
+    var_info  => {
+      a => [1],
+      b => [1],
+      c => "",
+      d => [5]
+    }
+}
+    #     {
+    #         'ran' =>  {
+    #             'init' => 8,
+    #             'end' => 1,
+    #             'next' => -1
+    #         },
+    #         'equations' => ['fi','gi'],
+    #         'var_info' => {'a'=> "",'b'=>""},
+    #         'name' => 'a18,b18,fi,gi'
+    #     },
+
+# a[N]-b[N]+b[2]+c=8;  //fn
+fn => {
+    ran => "",# si el rango es vacio es que no estas dentro de un for
+    var_info => {
+        a => [ N ],
+        b => [ N, 2 ],
+        c => ""
+    } 
+},
+my $causalized = {
+    ran        => "",
+    equations  => [fn]
+    var_info  => {
+      'a' => [ N ],
+      'b' => [ N, 2 ],
+      'c' => "",
+    }
+}
+
+
+
+Lo primero que debe hacerse es pasar a la escructura, en este caso es un hash que tiene dentro otros hashes y arrays.
+Pasos del algoritmo:
+1 - Se hace un pre procesamiento de los datos de manera que los rangos de los for sean disjuntos, es decir, que la interseccion de todos los rangos debe ser vacio.
+
+2 - Se armar un grafo el cual representa para un determinado valor de i cuales son los nodos y ecuaciones que estan involucrado, por un lado, los nodos que representan a las ecuaciones del loop(fi,gi) y por otro lado a las variables vectoriales(a[i],b[i]), en este caso, tenemos que la ecuacion gi tiene una variable b[i+1] la cual nos indica que para resolver el lazo en "i" necesito tener resuelto b[i+1], como esta debe ser resuelta antes se ignora en el grafo. Caracteristicas:
+  - cada ecuacion es un nodo
+  - cada variable es un nodo
+  - para las variables que pertenecen a un for:
+      -- si la misma variable aparece varias veces en la misma ecuacion con distintos indices, en el grafo solo aparece un solo indice que es el indice seleccionado, los demas se ignoran.
+      -- el indice para una variables puede ser distinto al indice de otra variable
+      -- el nombre de la variables "a" para el rango "X" a "Y" es aXtoY
+se comienza con las ecuaciones y variables que no pertenecen a ningun for, luego se procede con el resto de las ecuaciones que estan dentro de un for, dichas ecuaciones tienen variables que dependen de un indice "i", puede darse el caso que algunas ecuaciones tengan alguna variable que tiene el indice "i" y tambien otros indices i+k donde k es un valor entero, en dichas ecuaciones se debe optar por cual indice utilizar, ya sea "i" o algunos de los otros indices "i+k". Para hacer esta seleccion se toma un indice y se analizan los extremos, si estos valores no pertenecen a ningun nodo del grafo, se utiliza dicho indice. Una vez seleccionado el indice para la variable, a los otros no los tiene en cuenta. Esta estructura junto a la estructura original, se van usando por las diferentes funciones. Ademas del grafo la funcion retorna una lista de los indices seleccionados por cada variables(index).
+graph_info = {
+          'index' => {
+                       'b' => 0,
+                       'a' => 0
+                     }
+        };
+
+3 - Luego se cran los macronodos. Si un conjunto de nodos forman un ciclo, estos son un macronodo. Si se puede causalizar una ecuacion con una variable tambien forman un macro nodo. Cada macronodo tiene ecuaciones y variables que deben resolverse juntas.
+
+4 - Agarro c/u de los macronodo y los resuelvo, en el caso de que el macro nodo ya este causalizado no hay nada que hacer. Para los casos en donde el macro nodo tiene ciclo y ese ciclo esta asociado a un for en donde algunas variables tenian indices de la forma i+/-k con k!=0 tengo que dar un orden especifico para que se respete luego de haber resuelto el problema en una sola dimension. 
+
+
+5 - Tomo los macronodos junto a los datos iniciales, luego recorro c/u de los macronodos y voy guardando cuales son las variables que necesita tener resuelto, es decir, que variables deben resolverse antes y debe ser en otro macronodo.
+
+
+6 - Ahora tomo todos los macro nodos y los ordeno, digo que macronodo debe resolverse antes. De esta forma aseguro que a la hora de resolver internamente el macro nodo, ya tiene todas sus dependecias resueltas.
+
+  a - Tomo un macro nodo para ordenarlo(fi,gi,a1to8,b1to8). 
+      De este macro nodo voy tomando c/u las ecuaciones(fi,gi). 
+      De c/u de estas ecuaciones, voy a los datos originales(init_data) tomo el atributo var_info que tiene como key todas las variables que tiene la ecuacion y para c/u de las variables me fijo si este macronodo debe ser resuelto antes algun otro macro nodo.
+      Para hacer esto, con c/u de esta variable llamo a 
+      - sort_macro_node_with_cycle si pertenece a un ciclo la variable
+      - sort_macro_node_without_cycle si no pertenece a un ciclo
+
+    sort_macro_node_with_cycle: toma una variable perteneciente a un ciclo
+
+7 - Ordeno las macronodos topologicamente
+
+
+
+
+
+
+

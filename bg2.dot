@@ -1,0 +1,21 @@
+graph G{   
+        subgraph cluster0{
+        label = "Equations"; 
+        edge [style=invis];
+        fi -- fn -- gi -- gn;
+        }
+        subgraph cluster1{
+        label = "Unknowns";
+        edge [style=invis];
+        a10 -- a19 -- b10 -- b19;
+        }
+        edge [constraint=false];
+        b10 -- gn;
+        a10 -- gn;
+        gi -- a19;
+        fn -- b10;
+        gi -- b19;
+        a19 -- fi;
+        fn -- a10;
+        b19 -- fi;
+}

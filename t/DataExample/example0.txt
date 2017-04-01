@@ -1,0 +1,75 @@
+my $data_example0 = {
+    fi => {
+        ran => {
+            0 => {
+                init => 2,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => "",
+                constant => ""
+            },
+            b => {
+                ran      => "",
+                constant => ""
+            },
+        }, 
+    },
+    gi => {
+        ran => {
+            0 => {
+                init => 2,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => "",
+                constant => ""
+            },
+            b => {
+                ran   => {
+                    0 => {
+                        init => 2,
+                        end  => N,
+                    },
+                    -1 => {
+                        init => 1,
+                        end  => N-1,
+                    }
+                },
+                constant => ""
+            }
+        }, 
+    },
+    f1 => {
+        ran => "",
+        var_info => {
+            a => {
+                ran      => "",
+                constant => [1]
+            },
+            b => {
+                ran      => "",
+                constant => [1]
+            }
+        }
+    },
+    g1 => {
+        ran => "",
+        var_info => {
+            a => {
+                ran      => "",
+                constant => [1]
+            },
+            b => {
+                ran      => "",
+                constant => [1]
+            }
+        }
+    }
+};
