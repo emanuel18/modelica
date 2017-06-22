@@ -1,6 +1,6 @@
 
 use Data::Dumper;
-use lib "/Users/emanuel/Documents/personal/facultad/causalize/5";
+use lib "/Users/emanuel/Documents/personal/facultad/causalize/";
 
 use strict;
 use warnings;

@@ -5,7 +5,7 @@ use warnings;
 use Data::Dumper;
 use Graph::Directed;
 
-use lib "/Users/emanuel/Documents/personal/facultad/causalize/5";
+use lib "/Users/emanuel/Documents/personal/facultad/causalize";
 use PreProcessData qw(:all);
 use BuildGraph qw(:all);
 use BuildMacroNodes qw(:all);
@@ -46,6 +46,7 @@ sub causalize {
     my @internal_macro_node_ordered;
     my $start_time3 = [ gettimeofday ];
 
+    # esto se podria mover dentro de ProcessInternalMacroNodes
     my $node_info = get_equations_and_variables($graph);    
 
     $graph_info->{equations} = $node_info->{equations};
@@ -72,7 +73,7 @@ sub causalize {
     get_vars_solved_in_other_mn(
         init_data           => $init_data,
         internal_macro_node => \@internal_macro_node_ordered
-    );#warn Dumper(@internal_macro_node_ordered);return;
+    );
 
     # ahora tengo que ordenarlos externamente, tomo un macro nodo y busco cual es el orden 
     # en el que debe resolverse, cada macro nodo tiene ecuaciones y variables las cuales se 

@@ -136,7 +136,7 @@ sub pre_process_data {
                                 $new_var_info->{$var}->{ran}->{$index} = {
                                     init => $min_index_ran+$index,
                                     end  => $max_index_ran+$index
-                                }
+                                };
                             }
                             $new_var_info->{$var}->{constant} = $init_data->{$eq}->{var_info}->{$var}->{constant} || '';
                         }
@@ -159,19 +159,14 @@ sub pre_process_data {
     }
     # chequeo que todo haya quedado bien
     check_ran($init_data);
-
-    # print "New init data:" . Dumper(keys %{$init_data}) . "\n" if ($needs_modification);
-    # warn "init_data " . Dumper($init_data) . "\n";
-    # return $init_data;
 }
 
 sub _get_all_ran {
     my $data = shift;
 
-    # my $min_index_ran;
     my $min_index_ran;
     my $max_index_ran;
-    # my $last_ran;
+
     # busco el minimo y maximo valor de todos los rangos
     foreach my $eq (keys %{$data}) {
         if($data->{$eq}->{ran}) {
@@ -201,10 +196,9 @@ sub _get_all_ran {
     } 
 
     my $all_ran = {};
-    # my $next_ran;
+
     my $next_min_index_ran = $min_index_ran;
     my $next_max_index_ran = $max_index_ran;
-    # print "min_index_ran:$min_index_ran max_index_ran:$max_index_ran\n";
 
     my $i=1;
     my $find_ran = 1;
@@ -226,8 +220,6 @@ sub _get_all_ran {
                 
                 # el indice de next_max_index_ran debe ser mayor a next_min_index_ran 
                 # y mayor al anterior rango guardado
-                # my $before_max_ran = undef;
-                # $before_max_ran = $all_ran->{$i-1}->{max} if ($i>1);
                 if($init_eq < $next_max_index_ran and $init_eq > $next_min_index_ran) {
                     $next_max_index_ran = $init_eq;
                 }
@@ -237,7 +229,6 @@ sub _get_all_ran {
             }
         }
 
-        # print "i es :$i next_min_index_ran:$next_min_index_ran next_max_index_ran:$next_max_index_ran\n";
         my $next_max = $next_max_index_ran-1;
 
         # me fijo si hay algun rango que sea igual al que tengo si es asi dejo ese
@@ -260,24 +251,20 @@ sub _get_all_ran {
         };
         $i++;
         $next_min_index_ran = $next_max+1;
-        # warn "all_ran: " . Dumper($all_ran) . "\n";
 
         if($next_max_index_ran == $max_index_ran) {
             $find_ran = 0;
             if ($all_ran->{$i-1}->{max}+1 <= $max_index_ran) {
                 $all_ran->{$i-1}->{max} = $all_ran->{$i-1}->{max}+1;
             }
-            # warn "all_ran: " . Dumper($all_ran) . "\n";
         }
     }
-    # warn Dumper($all_ran);
     return $all_ran;
 }
 
 sub check_ran {
     my $init_data = shift;
 
-    # warn "init check ran ran!!!!!!!!\n";
     my ($init_eq,$end_eq);
     foreach my $eq (keys %{$init_data}) {
         if($init_data->{$eq}->{ran}) {
@@ -294,194 +281,6 @@ sub check_ran {
             }
         }
     }
-    # warn "ok ran!!!!!!!!\n";
 }
 
-# our $check = {
-#     fi => {
-#         ran => { 
-#             0 => {
-#                 init => 10,
-#                 end  => 20,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran      => "",
-#                 constant => [1]
-#             },
-#         }, 
-#     },
-#     gi => {
-#         ran => {
-#             0 => {
-#                 init => 10,
-#                 end  => 30,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#         }, 
-#     },
-#     hi => {
-#         ran => {
-#             0 => {
-#                 init => 1,
-#                 end  => 20,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#             b => {
-#                 ran   => {  
-#                     1 => {
-#                         init => 2,
-#                         end  => 21,
-#                     }
-#                 },
-#                 constant => ""
-#             },
-#         }, 
-#     },
-# };
-
-# our $solution_check = {
-#     fi1020 => {
-#         ran => { 
-#             0 => {
-#                 init => 10,
-#                 end  => 20,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran      => "",
-#                 constant => [1]
-#             },
-#         }, 
-#     },
-#     gi1020 => {
-#         ran => {
-#             0 => {
-#                 init => 10,
-#                 end  => 20,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#         }, 
-#     },
-#     gi2130 => {
-#         ran => {
-#             0 => {
-#                 init => 21,
-#                 end  => 30,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#         }, 
-#     },
-#     hi19 => {
-#         ran => {
-#             0 => {
-#                 init => 1,
-#                 end  => 9,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#             b => {
-#                 ran   => {  
-#                     1 => {
-#                         init => 2,
-#                         end  => 10,
-#                     }
-#                 },
-#                 constant => ""
-#             },
-#         }, 
-#     },
-#     hi1020 => {
-#         ran => {
-#             0 => {
-#                 init => 10,
-#                 end  => 20,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#             b => {
-#                 ran   => {  
-#                     1 => {
-#                         init => 11,
-#                         end  => 21,
-#                     }
-#                 },
-#                 constant => ""
-#             },
-#         }, 
-#     },
-# };
-
-# our $check1 = {
-#     fi => {
-#         ran => { 
-#             0 => {
-#                 init => 1,
-#                 end  => 5,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran      => "",
-#                 constant => [1]
-#             },
-#         }, 
-#     },
-#     gi => {
-#         ran => {
-#             0 => {
-#                 init => 1,
-#                 end  => 4,
-#                 vars => ['a','b']
-#             }
-#         },
-#         var_info => {
-#             a => {
-#                 ran   => "",
-#                 constant => ""
-#             },
-#         }, 
-#     },
-# };
-
-# &pre_process_init_data($check);
-# &pre_process_init_data($check1);
+1;

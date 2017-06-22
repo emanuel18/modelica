@@ -1,6 +1,6 @@
 
 use Data::Dumper;
-use lib "/Users/emanuel/Documents/personal/facultad/causalize/5";
+use lib "/Users/emanuel/Documents/personal/facultad/causalize/";
 
 use strict;
 use warnings;
@@ -228,24 +228,221 @@ our $data_example1b = {
     },
 };
 
+# Example 4a
+# model a
+#     Real a[100],b[100];
+#     parameter Integer N=5;
+# equation
+#     for i in 3:100 loop 
+#         a[i]*b[i]=456;           fi     
+#     end for;
+#     for i in 2:100 loop
+#         a[i]*b[i]*b[i-1]*345=6;  gi
+#     end for;
+#     a[1]=234;                    h1
+#     b[1]=23;                     h2
+#     b[2]=2;                      h3
+# end a;
+our $data_example4a = {
+    fi => {
+        ran => { # rango del for
+            0 => {
+                init => 3,
+                end  => 100,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => "",
+                constant => ""
+            },
+            b => {
+                ran      => "",
+                constant => ""
+            },
+        }, 
+    },
+    gi => {
+        ran => {
+            0 => {
+                init => 2,
+                end  => 100,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => "",
+                constant => ""
+            },,
+            b => {
+                ran   => {
+                    0 => {
+                        init => 2,
+                        end  => 100,
+                    },
+                    -1 => {
+                        init => 1,
+                        end  => 99,
+                    }
+                },
+                constant => ""
+            }
+        },
+    },
+    h1 => {
+        ran => "",
+        var_info => {
+            a => {
+                ran      => "",
+                constant => [1]
+            },
+        } 
+    },
+    h2 => {
+        ran => "",
+        var_info => {
+            b => {
+                ran      => "",
+                constant => [1]
+            },
+        } 
+    },
+    h3 => {
+        ran => "",
+        var_info => {
+            b => {
+                ran      => "",
+                constant => [2]
+            },
+        } 
+    },
+};
+
+# Example 4a
+# model a
+#     Real a[100],b[100];
+#     parameter Integer N=5;
+# equation
+#     for i in 3:100 loop 
+#         a[i]*b[i]=456;           fi3100
+#         a[i]*b[i]*b[i-1]*345=6;  gi3100   
+#     end for;
+
+#     a[2]*b[2]*b[1]*345=6;        gi2
+
+#     a[1]=234;                    h1
+#     b[1]=23;                     h2
+#     b[2]=2;                      h3
+# end a;
+our $data_example4b = {
+    fi3100 => {
+        ran => { # rango del for
+            0 => {
+                init => 3,
+                end  => 100,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => "",
+                constant => ""
+            },
+            b => {
+                ran      => "",
+                constant => ""
+            },
+        }, 
+    },
+    gi3100 => {
+        ran => {
+            0 => {
+                init => 3,
+                end  => 100,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => "",
+                constant => ""
+            },
+            b => {
+                ran   => {
+                    0 => {
+                        init => 3,
+                        end  => 100,
+                    },
+                    -1 => {
+                        init => 2,
+                        end  => 99,
+                    }
+                },
+                constant => ""
+            }
+        },
+    },
+    gi2 => {
+        ran => "",
+        var_info => {
+            a => {
+                ran      => "",
+                constant => [2]
+            },
+            b => {
+                ran      => "",
+                constant =>[1,2]
+            }
+        },
+    },
+    h1 => {
+        ran => "",
+        var_info => {
+            a => {
+                ran      => "",
+                constant => [1]
+            },
+        } 
+    },
+    h2 => {
+        ran => "",
+        var_info => {
+            b => {
+                ran      => "",
+                constant => [1]
+            },
+        } 
+    },
+    h3 => {
+        ran => "",
+        var_info => {
+            b => {
+                ran      => "",
+                constant => [2]
+            },
+        } 
+    },
+};
+
 &main();
 
 sub main {
 
-    # test_example_1();
-my $status = 1;
-    if($status) {
-        warn "si";
-    }
-    else {
-        warn "nooo";
-    }
+    test_example_4();
 }
 
-sub test_example_1 {
-    pre_process_data($data_example1a);
+# sub test_example_1 {
+#     pre_process_data($data_example1a);
 
-    is_deeply($data_example1a,$data_example1b,"Ok pre process data");
+#     is_deeply($data_example1a,$data_example1b,"Ok pre process data");
+# }
+
+sub test_example_4 {
+    pre_process_data($data_example4a);
+
+    is_deeply($data_example4a,$data_example4b,"Ok 4 pre process data");
 }
 
 1;

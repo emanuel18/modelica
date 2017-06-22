@@ -28,7 +28,6 @@ sub get_vars_solved_in_other_mn {
     my $init_data = $args{init_data};
 
     foreach my $mn (@{$args{internal_macro_node}}) {
-        warn "\n\n\n\n\n mn:" . Dumper($mn);
 
         # ecuaciones del macronodo
         foreach my $eq (@{$mn->{equations}}) {
@@ -91,7 +90,7 @@ sub get_vars_solved_in_other_mn {
                                     $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = '' unless(defined $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant});
                                 } 
                                 else {
-                                   $mn->{var_solved_in_other_mn}->{$eq}->{$var} = {
+                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var} = {
                                       ran => {
                                         $i => $init_data->{$eq}->{var_info}->{$var}->{ran}->{$i},
                                       },
@@ -184,7 +183,6 @@ sub get_vars_solved_in_other_mn {
                 }
             }
         }
-        warn "mn var_solved_in_other_mn:" . Dumper($mn->{var_solved_in_other_mn});
     }
 }
 

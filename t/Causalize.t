@@ -1,6 +1,6 @@
 
 use Data::Dumper;
-use lib "/Users/emanuel/Documents/personal/facultad/causalize/5";
+use lib "/Users/emanuel/Documents/personal/facultad/causalize/";
 
 use strict;
 use warnings;
@@ -13,6 +13,56 @@ use constant N_1 => 99;
 use constant N_2 => 98;
 
 use Causalize qw(causalize);
+
+
+# Example 00
+# a[N], b[N]
+# for i in 1:N loop
+#   a[i]*b[i]=8;   //fi
+#   a[i]+b[i]=20;  //gi
+# end for;
+
+
+our $data_example00 = {
+    fi => {
+        ran => { # rango del for
+            0 => {
+                init => 1,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => '',
+                constant => ''
+            },
+            b => {
+                ran      => '',
+                constant => ''
+            },
+        }, 
+    },
+    gi => {
+        ran => {
+            0 => {
+                init => 1,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => '',
+                constant => ''
+            },
+            b => {
+                ran      => '',
+                constant => ''
+            }
+        }, 
+    }
+};
 
 # Example 0
 # a[N], b[N]
@@ -35,12 +85,12 @@ our $data_example0 = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -54,8 +104,8 @@ our $data_example0 = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
                 ran   => {
@@ -68,32 +118,32 @@ our $data_example0 = {
                         end  => N-1,
                     }
                 },
-                constant => ""
+                constant => ''
             }
         }, 
     },
     f1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             }
         }
     },
     g1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             }
         }
@@ -124,12 +174,12 @@ our $data_example1 = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -153,72 +203,72 @@ our $data_example1 = {
                         end  => N-1,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
     f2 => {
-        ran => "",# si el rango es vacio es que no estas dentro de un for
+        ran => '',# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             }
         }
     },
     g2 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             }
         }
     },
     h1 => {
-        ran => "",# si el rango es vacio es que no estas dentro de un for
+        ran => '',# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             }
         }
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             c => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }
     },
     h3 => {
-        ran => "",
+        ran => '',
         var_info => {
             c => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         } 
     },
@@ -248,12 +298,12 @@ our $data_example2 = {
         },
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -277,62 +327,62 @@ our $data_example2 = {
                         end  => N-1,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
     f2 => {
-        ran => "",# si el rango es vacio es que no estas dentro de un for
+        ran => '',# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             },
         }
     },
     g2 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N-1]
             },
         }
     },
     f3 => {
-        ran => "",# si el rango es vacio es que no estas dentro de un for
+        ran => '',# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         }
     },
     g3 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         } 
@@ -372,11 +422,11 @@ our $data_example3a = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -400,28 +450,28 @@ our $data_example3a = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         } 
@@ -461,11 +511,11 @@ our $data_example3b = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -489,28 +539,28 @@ our $data_example3b = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         } 
@@ -540,12 +590,12 @@ our $data_example4= {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -569,28 +619,28 @@ our $data_example4= {
                         end  => N-1,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
@@ -623,12 +673,12 @@ our $data_example4a = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -642,8 +692,8 @@ our $data_example4a = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },,
             b => {
                 ran   => {
@@ -656,33 +706,33 @@ our $data_example4a = {
                         end  => 99,
                     }
                 },
-                constant => ""
+                constant => ''
             }
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h3 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [2]
             },
         } 
@@ -710,18 +760,18 @@ our $data_example4b = {
         ran => { # rango del for
             0 => {
                 init => 3,
-                end  => 99,
+                end  => 100,
                 vars => ['a','b']
             }
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -735,8 +785,8 @@ our $data_example4b = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
                 ran   => {
@@ -749,46 +799,46 @@ our $data_example4b = {
                         end  => 99,
                     }
                 },
-                constant => ""
+                constant => ''
             }
         },
     },
     gi2 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [2]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant =>[1,2]
             }
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h3 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [2]
             },
         } 
@@ -824,11 +874,11 @@ our $data_example5 = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -848,28 +898,28 @@ our $data_example5 = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         } 
@@ -900,12 +950,12 @@ our $data_example6a = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
@@ -919,12 +969,12 @@ our $data_example6a = {
         },
         var_info => {
             a => {
-                ran   => "",
-                constant => ""
+                ran   => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
@@ -944,27 +994,27 @@ our $data_example6a = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             c => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
     k10 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             c => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             }
         }
@@ -995,12 +1045,12 @@ our $data_example6b = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
@@ -1014,12 +1064,12 @@ our $data_example6b = {
         },
         var_info => {
             a => {
-                ran   => "",
-                constant => ""
+                ran   => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
@@ -1039,53 +1089,53 @@ our $data_example6b = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             c => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             }
         }, 
     },
     fi10 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         }, 
     },
     gi10 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         }, 
     },
     k10 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             c => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             }
         }
@@ -1116,16 +1166,16 @@ our $data_example7 = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             c => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         }, 
     },
@@ -1139,8 +1189,8 @@ our $data_example7 = {
         },
         var_info => {
             a => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
             b => {
                 ran   => {
@@ -1153,47 +1203,177 @@ our $data_example7 = {
                         end  => N,
                     }
                 },
-                constant => ""
+                constant => ''
             }
         },
     },
     h1 => {
-        ran => "",
+        ran => '',
         var_info => {
             a => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
             d => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         } 
     },
     h2 => {
-        ran => "",
+        ran => '',
         var_info => {
             b => {
-                ran      => "",
+                ran      => '',
                 constant => [N]
             },
         } 
     },
     h3 => {
-        ran => "",
+        ran => '',
         var_info => {
             c => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
             },
         } 
     },
     h4 => {
-        ran => "",
+        ran => '',
         var_info => {
             d => {
-                ran      => "",
-                constant => ""
+                ran      => '',
+                constant => ''
+            },
+        } 
+    },
+};
+
+# este sistema no puede resolverse
+# Example 8
+# model a
+#     Real a[10],b[10];
+# equation
+#     for i in 1:9 loop
+#         a[i]*b[i]=0;          fi
+#         a[i]*b[i]*b[i+1]=6;   gi
+#     end for;
+#     a[10]=2;                 h1
+#     b[1]=4;                  h2
+# end a;
+our $data_example8 = {
+    fi => {
+        ran => { # rango del for
+            0 => {
+                init => 1,
+                end  => 9,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => '',
+                constant => ''
+            },
+            b => {
+                ran      => '',
+                constant => ''
+            }
+        }, 
+    },
+    gi => {
+        ran => {
+            0 => {
+                init => 1,
+                end  => 9,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => '',
+                constant => ''
+            },
+            b => {
+                ran   => {
+                    0 => {
+                        init => 1,
+                        end  => 9,
+                    },
+                    1 => {
+                        init => 2,
+                        end  => 10,
+                    }
+                },
+                constant => ''
+            }
+        },
+    },
+    h1 => {
+        ran => '',
+        var_info => {
+            a => {
+                ran      => '',
+                constant => [10]
+            }
+        } 
+    },
+    h2 => {
+        ran => '',
+        var_info => {
+            b => {
+                ran      => '',
+                constant => [1]
+            },
+        } 
+    }
+};
+
+# class Ejemplo
+#     Real a,b,c;
+# equation
+#       a + b  = 5;   //f1
+#       a * b  = 4;   //f2
+#       c      = 2;   //f3
+# end Ejemplo;
+
+our $data_example9 = {
+    f1 => {
+        ran => '',
+        var_info => {
+            a => {
+                ran      => '',
+                constant => []
+            },
+            b => {
+                ran      => '',
+                constant => []
+            }
+        } 
+    },
+    f2 => {
+        ran => '',
+        var_info => {
+            a => {
+                ran      => '',
+                constant => []
+            },
+            b => {
+                ran      => '',
+                constant => []
+            },
+            c => {
+                ran      => '',
+                constant => []
+            }
+        } 
+    },
+    f3 => {
+        ran => '',
+        var_info => {
+            c => {
+                ran      => '',
+                constant => []
             },
         } 
     },
@@ -1202,9 +1382,9 @@ our $data_example7 = {
 &main();
 
 sub main {
+    my $result = causalize($data_example9);
+    warn "result data_example9:" . Dumper($result);
 
-    # my $result = causalize($data_example6a);
-    # warn Dumper($result);
     # test_example_0();
     # test_example_1();
 
@@ -1219,10 +1399,11 @@ sub main {
     # test_example_6a();
     # test_example_6b();
     # test_example_7();
+    # test_example_8();
     
 
 
-    test_1_2_3_4_5_6_7();
+    # test_1_2_3_4_5_6_7();
 
 }
 
@@ -1790,6 +1971,180 @@ sub test_1_2_3_4_5_6_7 {
                                            ],
     };
 
+    my $result4b = causalize($data_example4b);
+
+    my $expected4b = {
+          'all_macro_node' => [
+                                [
+                                  'a3to100',
+                                  'b3to100',
+                                  'fi3100',
+                                  'gi3100'
+                                ],
+                                [
+                                  'a1',
+                                  'h1'
+                                ],
+                                [
+                                  'b2',
+                                  'h3'
+                                ],
+                                [
+                                  'a2',
+                                  'gi2'
+                                ],
+                                [
+                                  'b1',
+                                  'h2'
+                                ]
+                              ],
+          'topological_sort' => [
+                                  {
+                                    '1' => [
+                                             'a3to100',
+                                             'b3to100',
+                                             'fi3100',
+                                             'gi3100'
+                                           ],
+                                    '3' => [
+                                             'a1',
+                                             'h1'
+                                           ],
+                                    '2' => [
+                                             'b1',
+                                             'h2'
+                                           ],
+                                    '4' => [
+                                             'b2',
+                                             'h3'
+                                           ],
+                                    '5' => [
+                                             'a2',
+                                             'gi2'
+                                           ]
+                                  },
+                                  {
+                                    'order' => [
+                                                 4,
+                                                 1,
+                                                 2,
+                                                 5,
+                                                 3
+                                               ]
+                                  }
+                                ],
+          'ordered_graph' => [
+                               'a3to100,b3to100,fi3100,gi3100 -> b2,h3',
+                               'a2,gi2 -> b1,h2',
+                               'a2,gi2 -> b2,h3'
+                             ],
+          'internal_macro_node_ordered' => [
+                                             {
+                                               'equations' => [
+                                                                'fi3100',
+                                                                'gi3100'
+                                                              ],
+                                               'ran' => {
+                                                          'vars' => [
+                                                                      'a',
+                                                                      'b'
+                                                                    ],
+                                                          'next' => 1,
+                                                          'end' => 100,
+                                                          'init' => 3
+                                                        },
+                                               'var_solved_in_other_mn' => {
+                                                                             'gi3100' => {
+                                                                                           'b' => {
+                                                                                                    'ran' => {
+                                                                                                               '-1' => {
+                                                                                                                         'end' => 99,
+                                                                                                                         'init' => 2
+                                                                                                                       }
+                                                                                                             },
+                                                                                                    'constant' => ''
+                                                                                                  }
+                                                                                         }
+                                                                           },
+                                               'var_info' => {
+                                                               'a' => '',
+                                                               'b' => ''
+                                                             },
+                                               'name' => 'a3to100,b3to100,fi3100,gi3100',
+                                               'index' => {
+                                                            'a' => 0,
+                                                            'b' => 0
+                                                          }
+                                             },
+                                             {
+                                               'index' => '',
+                                               'name' => 'a1,h1',
+                                               'var_info' => {
+                                                               'a' => [
+                                                                        1
+                                                                      ]
+                                                             },
+                                               'var_solved_in_other_mn' => {},
+                                               'ran' => '',
+                                               'equations' => [
+                                                                'h1'
+                                                              ]
+                                             },
+                                             {
+                                               'name' => 'b2,h3',
+                                               'index' => '',
+                                               'var_info' => {
+                                                               'b' => [
+                                                                        2
+                                                                      ]
+                                                             },
+                                               'var_solved_in_other_mn' => {},
+                                               'ran' => '',
+                                               'equations' => [
+                                                                'h3'
+                                                              ]
+                                             },
+                                             {
+                                               'var_info' => {
+                                                               'a' => [
+                                                                        2
+                                                                      ]
+                                                             },
+                                               'name' => 'a2,gi2',
+                                               'index' => '',
+                                               'equations' => [
+                                                                'gi2'
+                                                              ],
+                                               'ran' => '',
+                                               'var_solved_in_other_mn' => {
+                                                                             'gi2' => {
+                                                                                        'b' => {
+                                                                                                 'ran' => '',
+                                                                                                 'constant' => [
+                                                                                                                 1,
+                                                                                                                 2
+                                                                                                               ]
+                                                                                               }
+                                                                                      }
+                                                                           }
+                                             },
+                                             {
+                                               'var_info' => {
+                                                               'b' => [
+                                                                        1
+                                                                      ]
+                                                             },
+                                               'name' => 'b1,h2',
+                                               'index' => '',
+                                               'equations' => [
+                                                                'h2'
+                                                              ],
+                                               'ran' => '',
+                                               'var_solved_in_other_mn' => {}
+                                             }
+                                           ]
+    };
+
     my $result5 = causalize($data_example5);
 
     my $expected5 = {
@@ -2348,6 +2703,10 @@ sub test_1_2_3_4_5_6_7 {
     ok(compare_all_macro_node($expected3b->{all_macro_node},$result3b->{all_macro_node}),"Example 3b: Ok all_macro_node");
     ok(compare_ordered_graph($expected3b->{ordered_graph},$result3b->{ordered_graph},1),"Example 3b: Ok ordered_graph");
 
+    ok(compare_internal_macro_node_ordered($expected4b->{internal_macro_node_ordered},$result4b->{internal_macro_node_ordered}),"Example 4b: Ok internal_macro_node_ordered");
+    ok(compare_all_macro_node($expected4b->{all_macro_node},$result4b->{all_macro_node}),"Example 4b: Ok all_macro_node");
+    ok(compare_ordered_graph($expected4b->{ordered_graph},$result4b->{ordered_graph},1),"Example 4b: Ok ordered_graph");
+    
     ok(compare_internal_macro_node_ordered($expected4->{internal_macro_node_ordered},$result4->{internal_macro_node_ordered}),"Example 4: Ok internal_macro_node_ordered");
     ok(compare_all_macro_node($expected4->{all_macro_node},$result4->{all_macro_node}),"Example 4: Ok all_macro_node");
     ok(compare_ordered_graph($expected4->{ordered_graph},$result4->{ordered_graph},1),"Example 4: Ok ordered_graph");
@@ -2981,139 +3340,190 @@ sub test_example_4 {
 }
 
 sub test_example_4_ab {
-    my $result_a = causalize($data_example4a);
-    # my $result_b = causalize($data_example4b);
+    # my $result_a = causalize($data_example4a);
+    my $result_b = causalize($data_example4b);
 
     # warn Dumper($result_a);
-    return;
+    # return;
     my $expected = {
-          'internal_macro_node_ordered' => [
-                                             {
-                                               'var_info' => {
-                                                               'a' => [
-                                                                        2
-                                                                      ]
-                                                             },
-                                               'ran' => '',
-                                               'name' => 'a2,gi2',
-                                               'equations' => [
-                                                                'gi2'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'gi2' => {
-                                                                                        'b' => {
-                                                                                                 'constant' => [
-                                                                                                                 1,
-                                                                                                                 2
-                                                                                                               ],
-                                                                                                 'ran' => ''
-                                                                                               }
-                                                                                      }
-                                                                           },
-                                               'index' => ''
-                                             },
-                                             {
-                                               'var_info' => {
-                                                               'a' => [
-                                                                        1
-                                                                      ]
-                                                             },
-                                               'ran' => '',
-                                               'name' => 'a1,h1',
-                                               'equations' => [
-                                                                'h1'
-                                                              ],
-                                               'index' => '',
-                                               'var_solved_in_other_mn' => {}
-                                             },
-                                             {
-                                               'ran' => '',
-                                               'var_info' => {
-                                                               'b' => [
-                                                                        2
-                                                                      ]
-                                                             },
-                                               'name' => 'b2,h3',
-                                               'equations' => [
-                                                                'h3'
-                                                              ],
-                                               'index' => '',
-                                               'var_solved_in_other_mn' => {}
-                                             },
-                                             {
-                                               'equations' => [
-                                                                'h2'
-                                                              ],
-                                               'var_solved_in_other_mn' => {},
-                                               'index' => '',
-                                               'ran' => '',
-                                               'var_info' => {
-                                                               'b' => [
-                                                                        1
-                                                                      ]
-                                                             },
-                                               'name' => 'b1,h2'
-                                             }
-                                           ],
-          'topological_sort' => [
-                                  {
-                                    '4' => [
-                                             'b1',
-                                             'h2'
-                                           ],
-                                    '2' => [
-                                             'a1',
-                                             'h1'
-                                           ],
-                                    '1' => [
-                                             'a2',
-                                             'gi2'
-                                           ],
-                                    '3' => [
-                                             'b2',
-                                             'h3'
-                                           ]
-                                  },
-                                  {
-                                    'order' => [
-                                                 4,
-                                                 3,
-                                                 1,
-                                                 2
-                                               ]
-                                  }
-                                ],
-          'ordered_graph' => [
-                               'a2,gi2 -> b1,h2',
-                               'a2,gi2 -> b2,h3'
-                             ],
           'all_macro_node' => [
+                                [
+                                  'a3to100',
+                                  'b3to100',
+                                  'fi3100',
+                                  'gi3100'
+                                ],
                                 [
                                   'a1',
                                   'h1'
                                 ],
                                 [
-                                  'b1',
-                                  'h2'
+                                  'b2',
+                                  'h3'
                                 ],
                                 [
                                   'a2',
                                   'gi2'
                                 ],
                                 [
-                                  'b2',
-                                  'h3'
+                                  'b1',
+                                  'h2'
                                 ]
                               ],
-        };
+          'topological_sort' => [
+                                  {
+                                    '1' => [
+                                             'a3to100',
+                                             'b3to100',
+                                             'fi3100',
+                                             'gi3100'
+                                           ],
+                                    '3' => [
+                                             'a1',
+                                             'h1'
+                                           ],
+                                    '2' => [
+                                             'b1',
+                                             'h2'
+                                           ],
+                                    '4' => [
+                                             'b2',
+                                             'h3'
+                                           ],
+                                    '5' => [
+                                             'a2',
+                                             'gi2'
+                                           ]
+                                  },
+                                  {
+                                    'order' => [
+                                                 4,
+                                                 1,
+                                                 2,
+                                                 5,
+                                                 3
+                                               ]
+                                  }
+                                ],
+          'ordered_graph' => [
+                               'a3to100,b3to100,fi3100,gi3100 -> b2,h3',
+                               'a2,gi2 -> b1,h2',
+                               'a2,gi2 -> b2,h3'
+                             ],
+          'internal_macro_node_ordered' => [
+                                             {
+                                               'equations' => [
+                                                                'fi3100',
+                                                                'gi3100'
+                                                              ],
+                                               'ran' => {
+                                                          'vars' => [
+                                                                      'a',
+                                                                      'b'
+                                                                    ],
+                                                          'next' => 1,
+                                                          'end' => 100,
+                                                          'init' => 3
+                                                        },
+                                               'var_solved_in_other_mn' => {
+                                                                             'gi3100' => {
+                                                                                           'b' => {
+                                                                                                    'ran' => {
+                                                                                                               '-1' => {
+                                                                                                                         'end' => 99,
+                                                                                                                         'init' => 2
+                                                                                                                       }
+                                                                                                             },
+                                                                                                    'constant' => ''
+                                                                                                  }
+                                                                                         }
+                                                                           },
+                                               'var_info' => {
+                                                               'a' => '',
+                                                               'b' => ''
+                                                             },
+                                               'name' => 'a3to100,b3to100,fi3100,gi3100',
+                                               'index' => {
+                                                            'a' => 0,
+                                                            'b' => 0
+                                                          }
+                                             },
+                                             {
+                                               'index' => '',
+                                               'name' => 'a1,h1',
+                                               'var_info' => {
+                                                               'a' => [
+                                                                        1
+                                                                      ]
+                                                             },
+                                               'var_solved_in_other_mn' => {},
+                                               'ran' => '',
+                                               'equations' => [
+                                                                'h1'
+                                                              ]
+                                             },
+                                             {
+                                               'name' => 'b2,h3',
+                                               'index' => '',
+                                               'var_info' => {
+                                                               'b' => [
+                                                                        2
+                                                                      ]
+                                                             },
+                                               'var_solved_in_other_mn' => {},
+                                               'ran' => '',
+                                               'equations' => [
+                                                                'h3'
+                                                              ]
+                                             },
+                                             {
+                                               'var_info' => {
+                                                               'a' => [
+                                                                        2
+                                                                      ]
+                                                             },
+                                               'name' => 'a2,gi2',
+                                               'index' => '',
+                                               'equations' => [
+                                                                'gi2'
+                                                              ],
+                                               'ran' => '',
+                                               'var_solved_in_other_mn' => {
+                                                                             'gi2' => {
+                                                                                        'b' => {
+                                                                                                 'ran' => '',
+                                                                                                 'constant' => [
+                                                                                                                 1,
+                                                                                                                 2
+                                                                                                               ]
+                                                                                               }
+                                                                                      }
+                                                                           }
+                                             },
+                                             {
+                                               'var_info' => {
+                                                               'b' => [
+                                                                        1
+                                                                      ]
+                                                             },
+                                               'name' => 'b1,h2',
+                                               'index' => '',
+                                               'equations' => [
+                                                                'h2'
+                                                              ],
+                                               'ran' => '',
+                                               'var_solved_in_other_mn' => {}
+                                             }
+                                           ]
+    };
 
     # ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result_a->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
     # ok(compare_all_macro_node($expected->{all_macro_node},$result_a->{all_macro_node}),"Ok all_macro_node");
     # ok(compare_ordered_graph($expected->{ordered_graph},$result_a->{ordered_graph},1),"Ok ordered_graph");
 
-    # ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result_b->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
-    # ok(compare_all_macro_node($expected->{all_macro_node},$result_b->{all_macro_node}),"Ok all_macro_node");
-    # ok(compare_ordered_graph($expected->{ordered_graph},$result_b->{ordered_graph},1),"Ok ordered_graph");
+    ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result_b->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
+    ok(compare_all_macro_node($expected->{all_macro_node},$result_b->{all_macro_node}),"Ok all_macro_node");
+    ok(compare_ordered_graph($expected->{ordered_graph},$result_b->{ordered_graph},1),"Ok ordered_graph");
 }
 
 sub test_example_5 {
@@ -3696,6 +4106,17 @@ sub test_example_7 {
     ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
     ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
     ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
+}
+
+sub test_example_8 {
+    my $result = causalize($data_example8);
+    warn Dumper($result);
+    # return;
+    # my $expected = 
+
+    # ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
+    # ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
+    # ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
 }
 
 sub compare_internal_macro_node_ordered {

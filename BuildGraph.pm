@@ -27,120 +27,120 @@ use Params::Validate qw(:all);
 # a[N] + b[N] + c = 22  //h2
 # c = 10    
 
-our $init_data4 = {
-    fi => {
-        ran => { 
-            0 => {
-                init => 1,
-                end  => N-2,
-                vars => ['a','b']
-            }
-        },
-        var_info => {
-            a => {
-                ran      => "",
-                constant => [N-1]
-            },
-            b => {
-                ran      => "",
-                constant => ""
-            },
-            c => {
-                ran      => "",
-                constant => ""
-            },
-        }, 
-    },
-    gi => {
-        ran => {
-            0 => {
-                init => 1,
-                end  => N-2,
-                vars => ['a','b']
-            }
-        },
-        var_info => {
-            a => {
-                ran   => {
-                    0 => {
-                        init => 1,
-                        end  => N-2,
-                    },
-                    1 => {
-                        init => 2,
-                        end  => N-1,
-                    }
-                },
-                constant => ""
-            },
-            b => {
-                ran      => "",
-                constant => [N-1]
-            }
-        }, 
-    },
-    fn => {
-        ran => "",# si el rango es vacio es que no estas dentro de un for
-        var_info => {
-            a => {
-                ran      => "",
-                constant => [N-1]
-            },
-            b => {
-                ran      => "",
-                constant => [N-1]
-            },
-        }, 
-    },
-    gn => {
-        ran => "",
-        var_info => {
-            a => {
-                ran      => "",
-                constant => [N-1]
-            },
-            b => {
-                ran      => "",
-                constant => [N-1]
-            },
-        }, 
-    },
-    h1 => {
-        ran => "",
-        var_info => {
-            a => {
-                ran      => "",
-                constant => [N]
-            }
-        }, 
-    },
-    h2 => {
-        ran => "",
-        var_info => {
-            a => {
-                ran      => "",
-                constant => [N]
-            },
-            b => {
-                ran      => "",
-                constant => [N]
-            },
-            c => {
-                ran      => "",
-                constant => ""
-            },
-        }, 
-    },
-    h3 => {
-        ran => "",
-        var_info => {
-            c => {
-                ran      => "",
-                constant => ""
-            }
-        }
-    },
-};
+# our $init_data4 = {
+#     fi => {
+#         ran => { 
+#             0 => {
+#                 init => 1,
+#                 end  => N-2,
+#                 vars => ['a','b']
+#             }
+#         },
+#         var_info => {
+#             a => {
+#                 ran      => "",
+#                 constant => [N-1]
+#             },
+#             b => {
+#                 ran      => "",
+#                 constant => ""
+#             },
+#             c => {
+#                 ran      => "",
+#                 constant => ""
+#             },
+#         }, 
+#     },
+#     gi => {
+#         ran => {
+#             0 => {
+#                 init => 1,
+#                 end  => N-2,
+#                 vars => ['a','b']
+#             }
+#         },
+#         var_info => {
+#             a => {
+#                 ran   => {
+#                     0 => {
+#                         init => 1,
+#                         end  => N-2,
+#                     },
+#                     1 => {
+#                         init => 2,
+#                         end  => N-1,
+#                     }
+#                 },
+#                 constant => ""
+#             },
+#             b => {
+#                 ran      => "",
+#                 constant => [N-1]
+#             }
+#         }, 
+#     },
+#     fn => {
+#         ran => "",# si el rango es vacio es que no estas dentro de un for
+#         var_info => {
+#             a => {
+#                 ran      => "",
+#                 constant => [N-1]
+#             },
+#             b => {
+#                 ran      => "",
+#                 constant => [N-1]
+#             },
+#         }, 
+#     },
+#     gn => {
+#         ran => "",
+#         var_info => {
+#             a => {
+#                 ran      => "",
+#                 constant => [N-1]
+#             },
+#             b => {
+#                 ran      => "",
+#                 constant => [N-1]
+#             },
+#         }, 
+#     },
+#     h1 => {
+#         ran => "",
+#         var_info => {
+#             a => {
+#                 ran      => "",
+#                 constant => [N]
+#             }
+#         }, 
+#     },
+#     h2 => {
+#         ran => "",
+#         var_info => {
+#             a => {
+#                 ran      => "",
+#                 constant => [N]
+#             },
+#             b => {
+#                 ran      => "",
+#                 constant => [N]
+#             },
+#             c => {
+#                 ran      => "",
+#                 constant => ""
+#             },
+#         }, 
+#     },
+#     h3 => {
+#         ran => "",
+#         var_info => {
+#             c => {
+#                 ran      => "",
+#                 constant => ""
+#             }
+#         }
+#     },
+# };
 
 # &main();
 
@@ -152,9 +152,6 @@ our $init_data4 = {
 
     # build_png($graph);
 # }
-
-
-
 
 sub build_graph {
     my %args = validate(
@@ -170,15 +167,13 @@ sub build_graph {
 
     my %graph_info;
 
-    _build_graph_without_for($init_data,$graph,\%graph_info);
+    _build_graph_without_for($init_data,$graph);
     _build_graph_with_for($init_data,$graph,\%graph_info);
 
     my $data = {
         graph       => $graph,
         graph_info  => \%graph_info
     };
-
-    # warn "build_graph data: " . Dumper($data) if DEBUG;
 
     # armo el png del grafo
     build_png($graph);
@@ -190,7 +185,6 @@ sub build_graph {
 sub _build_graph_without_for {
     my $init_data = shift;
     my $graph = shift;
-    my $graph_info = shift;
 
     foreach my $eq (keys %{$init_data}) {
         next if($init_data->{$eq}->{ran} ne '');
@@ -206,23 +200,20 @@ sub _build_graph_without_for {
         my $var_info = $init_data->{$eq}->{var_info};
 
         foreach my $var (keys %{$var_info}) {
-            # print "_build_graph_without_loop VAR: $var \n" if DEBUG;
 
             my $var_data = $init_data->{$eq}->{var_info}->{$var}->{constant};
 
-            if ( $var_data ) {
+            if ( @$var_data ) {
                 foreach my $index (@{$var_data}) {
 
                     if ($index) {
                         looks_like_number($index);
 
                         my $new_var = $var . $index;
-                        # $graph_info->{vars}->{$new_var} = $var; 
-                        # $graph_info->{type}->{$new_var} = "var";
 
                         $graph->add_vertex( $new_var );
                         print "\t \$graph->add_vertex( \'$new_var\' );\n" if DEBUG1;
-                        # print "\n\nadd_vertex($new_var) \n" if DEBUG;
+
                         $graph->set_vertex_attribute($new_var, 'type', 'VAR');
                         $graph->set_vertex_attribute($new_var, 'original_var', $var);
 
@@ -237,8 +228,6 @@ sub _build_graph_without_for {
                     } else {
                         # caso de una variable como c[N]
                         my $new_var = $var;
-                        # $graph_info->{vars}->{$new_var} = $var; 
-                        # $graph_info->{type}->{$new_var} = "var";
 
                         print "\t2without_loop var: $new_var\n" if DEBUG;
                         print "\t2without_loop add_edge: ($eq, $new_var)\n" if DEBUG;
@@ -253,14 +242,13 @@ sub _build_graph_without_for {
                         print "\t \$graph->set_vertex_attribute(\'$new_var\', \'type\', \'VAR\');\n" if DEBUG1;
                         print "\t \$graph->set_vertex_attribute(\'$new_var\', \'original_var\', \'$var\');\n" if DEBUG1;
 
-                        # print "\t12var: $new_var\n";
                         $graph->add_edge( $eq, $new_var );
                         print "\t \$graph->add_edge( \'$eq\', \'$new_var\' );\n" if DEBUG1;
                     }
                 }
             }
             else { # este es el caso de c
-                my $new_var = $var;
+                my $new_var = $var;print "salgo por c";
 
                 $graph->add_vertex( $new_var );
                 $graph->set_vertex_attribute($new_var, 'type', 'VAR');
@@ -507,13 +495,11 @@ sub _build_graph_with_for {
 }
 
 sub build_png {
-    # my $data = shift;
     my $graph = shift;
-    # my $graph_info = $data->{graph_info};
 
     my $g = "graph G{   
         subgraph cluster0{
-        label = \"Equations\"; 
+        label = \"Ecuaciones\"; 
         edge [style=invis];
         ";
 
@@ -523,7 +509,6 @@ sub build_png {
     my @var;
     foreach my $node (@all_nodes) {
 
-        # if ($graph_info->{type}->{$node} eq 'eq') {
         die "Node:$node is not defined" unless($graph->get_vertex_attribute($node, 'type'));
         if ($graph->get_vertex_attribute($node, 'type') eq 'EQ') {
             push @ec, $node;
@@ -538,7 +523,7 @@ sub build_png {
     $g .= $ecs . ";\n";
     $g .= "        }
         subgraph cluster1{
-        label = \"Unknowns\";
+        label = \"Variables\";
         edge [style=invis];
         ";
     $g .= $vars . ";\n";
@@ -566,8 +551,3 @@ sub build_png {
 }
 
 1;
-        # fi -- gi -- fn -- gn;
-        # a19 -- b19 -- a10 -- b10;
-
-#         fi -- gi -- fn -- gn -- h1 -- h2 -- h3;
-#         a1to8 -- b1to8 -- a9 -- b9 -- a10 -- b10 -- c;

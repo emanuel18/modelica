@@ -280,7 +280,7 @@ sub resolve_internal_macro_node {
             }
         }
 
-        $ordered_ran = "";
+        $ordered_ran = '';
     }
 
     my $ind;
@@ -293,7 +293,7 @@ sub resolve_internal_macro_node {
         var_info   => $ordered_var_info,
         ran        => $ordered_ran,
         index      => $ordered_ran ? $ind : ''
-    };
+    };warn Dumper($ordered_graph);
 
     return $ordered_graph;
 
@@ -309,8 +309,8 @@ sub resolve_internal_macro_node {
 #     },
 #     equations  => [fi,gi]
 #     var_info  => {
-#       a => "",
-#       b => "",
+#       a => '',
+#       b => '',
 #     }
 # }
 

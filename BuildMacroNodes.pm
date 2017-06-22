@@ -77,6 +77,7 @@ sub build_macro_nodes {
         $graph = $graph->delete_cycle(@cycle_nodes);
         # delete vertices
         $graph = $graph->delete_vertices(@cycle_nodes);
+
         if($is_big_macro_node) {
 
             $graph = $graph->delete_vertices(@cycle_nodes);
@@ -103,10 +104,10 @@ sub build_macro_nodes {
             # agrego las nuevas aristas del macronodo
             foreach my $node (@new_edge) {
                 if($graph->get_vertex_attribute($node, 'type') eq 'VAR') {
-                    $graph->add_edge( $node, $name_mn_var );
+                    $graph->add_edge( $node, $name_mn_eq );
                 }
                 elsif($graph->get_vertex_attribute($node, 'type') eq "EQ") {
-                    $graph->add_edge( $node, $name_mn_eq );
+                    $graph->add_edge( $node, $name_mn_var );
                 }
                 else {
                     die "Undefined type to node:$node in new edge";

@@ -1,22 +1,9 @@
 graph G{   
         subgraph cluster0{
-        label = "Equations"; 
+        label = ""; 
         edge [style=invis];
-        fi -- gi -- h1 -- h2 -- h3 -- h4;
-        }
-        subgraph cluster1{
-        label = "Unknowns";
-        edge [style=invis];
-        a100 -- a1to99 -- b100 -- b1to99 -- c -- d;
+        f1_f2_a_b -- f3_c;
         }
         edge [constraint=false];
-        a1to99 -- gi;
-        fi -- b1to99;
-        h1 -- d;
-        h2 -- b100;
-        d -- h4;
-        h3 -- c;
-        h1 -- a100;
-        gi -- b1to99;
-        a1to99 -- fi;
+        f1_f2_a_b -- f3_c;
 }

@@ -7,7 +7,7 @@ graph G{
         subgraph cluster1{
         label = "Unknowns";
         edge [style=invis];
-        b1to9 -- a2to10 -- a1 -- b10;
+        a2to10 -- b1to9 -- a1 -- b10;
         }
         edge [constraint=false];
         a2to10 -- gi;
