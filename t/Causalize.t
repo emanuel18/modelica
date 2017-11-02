@@ -1,6 +1,6 @@
 
 use Data::Dumper;
-use lib "/Users/emanuel/Documents/personal/facultad/causalize/";
+use lib "/Users/emanuel/Google Drive/personal/facultad/causalize/";
 
 use strict;
 use warnings;
@@ -14,14 +14,14 @@ use constant N_2 => 98;
 
 use Causalize qw(causalize);
 
+# a[i,j+1,k-1] -> a[i + (j+1)*N + (k-1)*N*N]
 
 # Example 00
-# a[N], b[N]
+# a[N,N,N], b[N]
 # for i in 1:N loop
 #   a[i]*b[i]=8;   //fi
-#   a[i]+b[i]=20;  //gi
+#   a[i]+b[i/2]=20;  //gi
 # end for;
-
 
 our $data_example00 = {
     fi => {
@@ -34,12 +34,12 @@ our $data_example00 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -53,17 +53,18 @@ our $data_example00 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     }
 };
 
+# ejemplo usado en la tesina
 # Example 0
 # a[N], b[N]
 # for i in 2:N loop
@@ -85,12 +86,114 @@ our $data_example0 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
+            }
+        }, 
+    },
+    gi => {
+        ran => {
+            0 => {
+                init => 2,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => {},
+                constant => []
+            },
+            b => {
+                ran   => {
+                    0 => {
+                        init => 2,
+                        end  => N,
+                    },
+                    -1 => {
+                        init => 1,
+                        end  => N-1,
+                    }
+                },
+                constant => []
+            }
+        }, 
+    },
+    f1 => {
+        ran => {},
+        var_info => {
+            a => {
+                ran      => {},
+                constant => [1]
+            },
+            b => {
+                ran      => {},
+                constant => [1]
+            }
+        }
+    },
+    g1 => {
+        ran => {},
+        var_info => {
+            a => {
+                ran      => {},
+                constant => [1]
+            },
+            b => {
+                ran      => {},
+                constant => [1]
+            }
+        }
+    }
+};
+
+
+# ejemplo usado en la tesina
+# model EjemploVectorialConLazos 
+# Real a[N] ,b[N];
+# parameter Integer N=10; 
+# equation
+# for i in 2:N loop
+#   a[i]∗b[i]∗a[i−1]/100=4;  //fi
+# end for;
+# for i in 2:N loop
+#   a[i]∗b[i]∗a[i−1]∗345=6; //gi 
+# end for;
+# 
+# b[1]=4;                    //h1
+# a[N]=2;                    //hN 
+# end EjemploVectorialConLazos
+
+our $data_example01 = {
+    fi => {
+        ran => {
+            0 => {
+                init => 2,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran   => {
+                    0 => {
+                        init => 2,
+                        end  => N,
+                    },
+                    -1 => {
+                        init => 1,
+                        end  => N-1,
+                    }
+                },
+                constant => []
+            },
+            b => {
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -104,10 +207,6 @@ our $data_example0 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
-            },
-            b => {
                 ran   => {
                     0 => {
                         init => 2,
@@ -118,34 +217,30 @@ our $data_example0 = {
                         end  => N-1,
                     }
                 },
-                constant => ''
-            }
+                constant => []
+            },
+            b => {
+                ran      => {},
+                constant => []
+            },
         }, 
     },
     f1 => {
-        ran => '',
+        ran => {},
         var_info => {
-            a => {
-                ran      => '',
-                constant => [1]
-            },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             }
         }
     },
     g1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
-                constant => [1]
+                ran      => {},
+                constant => []
             },
-            b => {
-                ran      => '',
-                constant => [1]
-            }
         }
     }
 };
@@ -174,12 +269,12 @@ our $data_example1 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -203,72 +298,72 @@ our $data_example1 = {
                         end  => N-1,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
     f2 => {
-        ran => '',# si el rango es vacio es que no estas dentro de un for
+        ran => {},# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             }
         }
     },
     g2 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             }
         }
     },
     h1 => {
-        ran => '',# si el rango es vacio es que no estas dentro de un for
+        ran => {},# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             }
         }
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             c => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }
     },
     h3 => {
-        ran => '',
+        ran => {},
         var_info => {
             c => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         } 
     },
@@ -298,12 +393,12 @@ our $data_example2 = {
         },
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -327,62 +422,62 @@ our $data_example2 = {
                         end  => N-1,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
     f2 => {
-        ran => '',# si el rango es vacio es que no estas dentro de un for
+        ran => {},# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             },
         }
     },
     g2 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N-1]
             },
         }
     },
     f3 => {
-        ran => '',# si el rango es vacio es que no estas dentro de un for
+        ran => {},# si el rango es vacio es que no estas dentro de un for
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         }
     },
     g3 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         } 
@@ -422,11 +517,11 @@ our $data_example3a = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -450,28 +545,28 @@ our $data_example3a = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         } 
@@ -511,11 +606,11 @@ our $data_example3b = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -539,28 +634,28 @@ our $data_example3b = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         } 
@@ -590,12 +685,12 @@ our $data_example4= {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -619,43 +714,43 @@ our $data_example4= {
                         end  => N-1,
                     }
                 },
-                constant => ''
+                constant => []
             },
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
 };
 
-# Example 4a
+# Example 4a o EjemploCRD(en la tesina)
 # model a
-#     Real a[100],b[100];
+#     Real a[N],b[N];
 #     parameter Integer N=5;
 # equation
-#     for i in 3:100 loop 
+#     for i in 3:N loop 
 #         a[i]*b[i]=456;           fi     
 #     end for;
-#     for i in 2:100 loop
+#     for i in 2:N loop
 #         a[i]*b[i]*b[i-1]*345=6;  gi
 #     end for;
 #     a[1]=234;                    h1
@@ -667,18 +762,18 @@ our $data_example4a = {
         ran => { # rango del for
             0 => {
                 init => 3,
-                end  => 100,
+                end  => N,
                 vars => ['a','b']
             }
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -686,53 +781,53 @@ our $data_example4a = {
         ran => {
             0 => {
                 init => 2,
-                end  => 100,
+                end  => N,
                 vars => ['a','b']
             }
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },,
             b => {
                 ran   => {
                     0 => {
                         init => 2,
-                        end  => 100,
+                        end  => N,
                     },
                     -1 => {
                         init => 1,
-                        end  => 99,
+                        end  => N_1,
                     }
                 },
-                constant => ''
+                constant => []
             }
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h3 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [2]
             },
         } 
@@ -741,12 +836,12 @@ our $data_example4a = {
 
 # Example 4a
 # model a
-#     Real a[100],b[100];
+#     Real a[N],b[N];
 #     parameter Integer N=5;
 # equation
-#     for i in 3:100 loop 
-#         a[i]*b[i]=456;           fi3100
-#         a[i]*b[i]*b[i-1]*345=6;  gi3100   
+#     for i in 3:N loop 
+#         a[i]*b[i]=456;           fi3N
+#         a[i]*b[i]*b[i-1]*345=6;  gi3N   
 #     end for;
 
 #     a[2]*b[2]*b[1]*345=6;        gi2
@@ -756,89 +851,89 @@ our $data_example4a = {
 #     b[2]=2;                      h3
 # end a;
 our $data_example4b = {
-    fi3100 => {
+    'fi3'. &N => {
         ran => { # rango del for
             0 => {
                 init => 3,
-                end  => 100,
+                end  => N,
                 vars => ['a','b']
             }
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
-    gi3100 => {
+    'gi3'. &N => {
         ran => {
             0 => {
                 init => 3,
-                end  => 100,
+                end  => N,
                 vars => ['a','b']
             }
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
                 ran   => {
                     0 => {
                         init => 3,
-                        end  => 100,
+                        end  => N,
                     },
                     -1 => {
                         init => 2,
-                        end  => 99,
+                        end  => N_1,
                     }
                 },
-                constant => ''
+                constant => []
             }
         },
     },
     gi2 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [2]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant =>[1,2]
             }
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h3 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [2]
             },
         } 
@@ -874,11 +969,11 @@ our $data_example5 = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -898,28 +993,28 @@ our $data_example5 = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [1]
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         } 
@@ -936,8 +1031,27 @@ our $data_example5 = {
 #     for i in 1:N-1 loop
 #       c[i]=a[i+1]+3*b[i];  hi
 #     end for;
-#     c[N]=3*b[N];           k10
+#     c[N]=3*b[N];           kN
 # end Ejemplo;
+
+# se transforma en 
+# Example 6a
+# equation
+#       a[N-1]*b[N-1]=1;     fi
+#       a[N-1]+b[N-1]^2=0;   gi
+#
+#   for i in 1:N-1 loop
+#       a[i]*b[i]=1;         fi
+#       a[i]+b[i]^2=0;       gi
+#       c[i]=a[i+1]+3*b[i];  hi
+#   end for;
+#
+#     c[N]=3*b[N];           kN
+# end Ejemplo;
+# este no puede ser resuelto debido a que
+# dentro del loop tenemos a hi que tiene 
+# a con indice i+1 y en el resto de las 
+# ecuaciones no esta
 
 our $data_example6a = {
     fi => {
@@ -950,12 +1064,12 @@ our $data_example6a = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
@@ -969,12 +1083,12 @@ our $data_example6a = {
         },
         var_info => {
             a => {
-                ran   => '',
-                constant => ''
+                ran   => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
@@ -994,27 +1108,27 @@ our $data_example6a = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             c => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
     k10 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             c => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             }
         }
@@ -1045,12 +1159,12 @@ our $data_example6b = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
@@ -1064,12 +1178,12 @@ our $data_example6b = {
         },
         var_info => {
             a => {
-                ran   => '',
-                constant => ''
+                ran   => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
@@ -1089,53 +1203,53 @@ our $data_example6b = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             c => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             }
         }, 
     },
     fi10 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         }, 
     },
     gi10 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         }, 
     },
     k10 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             c => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             }
         }
@@ -1166,16 +1280,16 @@ our $data_example7 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             c => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         }, 
     },
@@ -1189,8 +1303,8 @@ our $data_example7 = {
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
                 ran   => {
@@ -1203,47 +1317,47 @@ our $data_example7 = {
                         end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             }
         },
     },
     h1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
             d => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
             b => {
-                ran      => '',
+                ran      => {},
                 constant => [N]
             },
         } 
     },
     h3 => {
-        ran => '',
+        ran => {},
         var_info => {
             c => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         } 
     },
     h4 => {
-        ran => '',
+        ran => {},
         var_info => {
             d => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
         } 
     },
@@ -1251,85 +1365,85 @@ our $data_example7 = {
 
 # este sistema no puede resolverse
 # Example 8
-# model a
-#     Real a[10],b[10];
+# model sin_solucion
+#     Real a[N],b[N];
 # equation
-#     for i in 1:9 loop
-#         a[i]*b[i]=0;          fi
-#         a[i]*b[i]*b[i+1]=6;   gi
+#     for i in 1:N-1 loop
+#         a[i]*b[i]*b[i+1]=6;   fi
+#         a[i]*b[i]=0;          gi
 #     end for;
-#     a[10]=2;                 h1
-#     b[1]=4;                  h2
-# end a;
+#     b[1]=2;                  h1
+#     a[N]=4;                  hN
+# end sin_solucion;
 our $data_example8 = {
     fi => {
-        ran => { # rango del for
-            0 => {
-                init => 1,
-                end  => 9,
-                vars => ['a','b']
-            }
-        },
-        var_info => {
-            a => {
-                ran      => '',
-                constant => ''
-            },
-            b => {
-                ran      => '',
-                constant => ''
-            }
-        }, 
-    },
-    gi => {
         ran => {
             0 => {
                 init => 1,
-                end  => 9,
+                end  => N-1,
                 vars => ['a','b']
             }
         },
         var_info => {
             a => {
-                ran      => '',
-                constant => ''
+                ran      => {},
+                constant => []
             },
             b => {
                 ran   => {
                     0 => {
                         init => 1,
-                        end  => 9,
+                        end  => N-1,
                     },
                     1 => {
                         init => 2,
-                        end  => 10,
+                        end  => N,
                     }
                 },
-                constant => ''
+                constant => []
             }
         },
     },
-    h1 => {
-        ran => '',
+    gi => {
+        ran => { # rango del for
+            0 => {
+                init => 1,
+                end  => N-1,
+                vars => ['a','b']
+            }
+        },
         var_info => {
             a => {
-                ran      => '',
-                constant => [10]
+                ran      => {},
+                constant => []
+            },
+            b => {
+                ran      => {},
+                constant => []
+            }
+        }, 
+    },
+    h1 => {
+        ran => {},
+        var_info => {
+            b => {
+                ran      => {},
+                constant => [1]
             }
         } 
     },
     h2 => {
-        ran => '',
+        ran => {},
         var_info => {
-            b => {
-                ran      => '',
-                constant => [1]
+            a => {
+                ran      => {},
+                constant => [N]
             },
         } 
     }
 };
 
-# class Ejemplo
+# model Ejemplo
 #     Real a,b,c;
 # equation
 #       a + b  = 5;   //f1
@@ -1339,75 +1453,75 @@ our $data_example8 = {
 
 our $data_example9 = {
     f1 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => []
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => []
             }
         } 
     },
     f2 => {
-        ran => '',
+        ran => {},
         var_info => {
             a => {
-                ran      => '',
+                ran      => {},
                 constant => []
             },
             b => {
-                ran      => '',
+                ran      => {},
                 constant => []
             },
             c => {
-                ran      => '',
+                ran      => {},
                 constant => []
             }
         } 
     },
     f3 => {
-        ran => '',
+        ran => {},
         var_info => {
             c => {
-                ran      => '',
+                ran      => {},
                 constant => []
             },
         } 
     },
 };
 
+
 &main();
 
 sub main {
-    my $result = causalize($data_example9);
-    warn "result data_example9:" . Dumper($result);
 
-    # test_example_0();
-    # test_example_1();
+    test_example_0();
+    test_example_1();
 
-    # test_example_2();
+    test_example_2();
 
-    # test_example_3a();
-    # test_example_3b();
+    test_example_3a();
+    test_example_3b();
     
-    # test_example_4();
-    # test_example_4_ab();
-    # test_example_5();
+    test_example_4();
+    test_example_4_ab();
+    test_example_5();
+    
+    # no puede ser resuelto
     # test_example_6a();
     # test_example_6b();
-    # test_example_7();
-    # test_example_8();
     
+    test_example_7();
 
+    # test_1_2_3_4_5_7();
 
-    # test_1_2_3_4_5_6_7();
-
+    done_testing();
 }
 
-sub test_1_2_3_4_5_6_7 {
+sub test_1_2_3_4_5_7 {
 
     my $result1 = causalize($data_example1);
 
@@ -1423,14 +1537,14 @@ sub test_1_2_3_4_5_6_7 {
                                                                                                                     'init' => 2
                                                                                                                   }
                                                                                                          },
-                                                                                                'constant' => ''
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
                                                'name' => 'a1to'.N_2.',b1to'.N_2.',fi,gi',
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'ran' => {
                                                           'next' => -1,
@@ -1456,7 +1570,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                 'f2',
                                                                 'g2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         N_1
@@ -1466,21 +1580,21 @@ sub test_1_2_3_4_5_6_7 {
                                                                       ]
                                                              },
                                                'name' => 'a'.N_1.',b'.N_1.',f2,g2',
-                                               'index' => ''
+                                               'index' => {}
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {
                                                                              'h2' => {
                                                                                        'a' => {
-                                                                                                'ran' => '',
+                                                                                                'ran' => {},
                                                                                                 'constant' => [
-                                                                                                                100
+                                                                                                                N
                                                                                                               ]
                                                                                               },
                                                                                        'c' => {
-                                                                                                'ran' => '',
-                                                                                                'constant' => ''
+                                                                                                'ran' => {},
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
@@ -1493,7 +1607,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                 'h2'
                                                               ],
                                                'name' => 'b'.N.',h2',
-                                               'index' => ''
+                                               'index' => {}
                                              },
                                              {
                                                'name' => 'a'.N.',h1',
@@ -1503,11 +1617,11 @@ sub test_1_2_3_4_5_6_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
-                                                'index' => ''
+                                                'index' => {}
                                              },
                                              {
                                                'var_solved_in_other_mn' => {},
@@ -1517,9 +1631,9 @@ sub test_1_2_3_4_5_6_7 {
                                                'var_info' => {
                                                                'c' => []
                                                              },
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'c,h3',
-                                               'index' => ''
+                                               'index' => {}
                                              }
                                            ],
           'all_macro_node' => [
@@ -1581,8 +1695,8 @@ sub test_1_2_3_4_5_6_7 {
           'internal_macro_node_ordered' => [
                                              {
                                                'var_solved_in_other_mn' => {},
-                                               'ran' => '',
-                                               'index' => '',
+                                               'ran' => {},
+                                               'index' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         N_1
@@ -1602,7 +1716,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                 'f3',
                                                                 'g3'
                                                               ],
-                                               'index' => '',
+                                               'index' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         N
@@ -1611,7 +1725,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'a'.N.',b'.N.',f3,g3',
                                                'var_solved_in_other_mn' => {}
                                              },
@@ -1627,8 +1741,8 @@ sub test_1_2_3_4_5_6_7 {
                                                           'next' => -1
                                                         },
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'index' => {
                                                             'a' => 0,
@@ -1642,9 +1756,9 @@ sub test_1_2_3_4_5_6_7 {
                                                                              'fi' => {
                                                                                        'a' => {
                                                                                                 'constant' => [
-                                                                                                                100
+                                                                                                                N
                                                                                                               ],
-                                                                                                'ran' => ''
+                                                                                                'ran' => {}
                                                                                               }
                                                                                      },
                                                                              'gi' => {
@@ -1652,10 +1766,10 @@ sub test_1_2_3_4_5_6_7 {
                                                                                                 'ran' => {
                                                                                                            '1' => {
                                                                                                                     'init' => 2,
-                                                                                                                    'end' => 99
+                                                                                                                    'end' => N_1
                                                                                                                   }
                                                                                                          },
-                                                                                                'constant' => ''
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
@@ -1682,8 +1796,8 @@ sub test_1_2_3_4_5_6_7 {
                                                         },
                                                'name' => 'a2to'.N.',b1to'.N_1.',fi,gi',
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'index' => {
                                                             'a' => 1,
@@ -1696,7 +1810,7 @@ sub test_1_2_3_4_5_6_7 {
                                                'var_solved_in_other_mn' => {
                                                                              'gi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '0' => {
                                                                                                                     'init' => 1,
@@ -1711,7 +1825,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                                      },
                                                                              'fi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '0' => {
                                                                                                                     'init' => 1,
@@ -1735,14 +1849,14 @@ sub test_1_2_3_4_5_6_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'name' => 'b'.N.',h2',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {},
                                              },
                                              {
                                                'name' => 'a1,h1',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
@@ -1751,7 +1865,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                         1
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'var_solved_in_other_mn' => {},
                                              }
                                            ],
@@ -1792,8 +1906,8 @@ sub test_1_2_3_4_5_6_7 {
                                                         },
                                                'name' => 'a1to'.N_1.',b1to'.N_1.',fi,gi',
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'index' => {
                                                             'a' => 0,
@@ -1806,10 +1920,10 @@ sub test_1_2_3_4_5_6_7 {
                                                'var_solved_in_other_mn' => {
                                                                              'gi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '1' => {
-                                                                                                                    'end' => 100,
+                                                                                                                    'end' => N,
                                                                                                                     'init' => 2
                                                                                                                   }
                                                                                                          }
@@ -1817,10 +1931,10 @@ sub test_1_2_3_4_5_6_7 {
                                                                                      },
                                                                              'fi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '1' => {
-                                                                                                                    'end' => 100,
+                                                                                                                    'end' => N,
                                                                                                                     'init' => 2
                                                                                                                   }
                                                                                                          }
@@ -1837,15 +1951,15 @@ sub test_1_2_3_4_5_6_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'name' => 'b'.N.',h2',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {}
                                              },
                                              {
                                                'var_solved_in_other_mn' => {},
                                                'name' => 'a'.N.',h1',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
@@ -1854,7 +1968,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => ''
+                                               'index' => {}
                                              }
                                            ],
           'all_macro_node' => [
@@ -1904,8 +2018,8 @@ sub test_1_2_3_4_5_6_7 {
           'internal_macro_node_ordered' => [
                                              {
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'equations' => [
                                                                 'fi',
@@ -1934,7 +2048,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                                                      'init' => 1
                                                                                                    }
                                                                                          },
-                                                                                'constant' => ''
+                                                                                'constant' => []
                                                                               }
                                                                      }
                                                            },
@@ -1946,17 +2060,17 @@ sub test_1_2_3_4_5_6_7 {
                                                                         1
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'a1,h1',
                                                'var_solved_in_other_mn' => {},
                                              },
                                              {
-                                               'index' => '',
-                                               'ran' => '',
+                                               'index' => {},
+                                               'ran' => {},
                                                'name' => 'b1,h2',
                                                'equations' => [
                                                                 'h2'
@@ -1976,10 +2090,10 @@ sub test_1_2_3_4_5_6_7 {
     my $expected4b = {
           'all_macro_node' => [
                                 [
-                                  'a3to100',
-                                  'b3to100',
-                                  'fi3100',
-                                  'gi3100'
+                                  'a3to'.N,
+                                  'b3to'.N,
+                                  'fi3'.N,
+                                  'gi3'.N
                                 ],
                                 [
                                   'a1',
@@ -2001,10 +2115,10 @@ sub test_1_2_3_4_5_6_7 {
           'topological_sort' => [
                                   {
                                     '1' => [
-                                             'a3to100',
-                                             'b3to100',
-                                             'fi3100',
-                                             'gi3100'
+                                             'a3to'.N,
+                                             'b3to'.N,
+                                             'fi3'.N,
+                                             'gi3'.N
                                            ],
                                     '3' => [
                                              'a1',
@@ -2034,15 +2148,15 @@ sub test_1_2_3_4_5_6_7 {
                                   }
                                 ],
           'ordered_graph' => [
-                               'a3to100,b3to100,fi3100,gi3100 -> b2,h3',
+                               'a3to'.N.',b3to'.N.',fi3'.N.',gi3'.N.' -> b2,h3',
                                'a2,gi2 -> b1,h2',
                                'a2,gi2 -> b2,h3'
                              ],
           'internal_macro_node_ordered' => [
                                              {
                                                'equations' => [
-                                                                'fi3100',
-                                                                'gi3100'
+                                                                'fi3'.N,
+                                                                'gi3'.N
                                                               ],
                                                'ran' => {
                                                           'vars' => [
@@ -2050,34 +2164,34 @@ sub test_1_2_3_4_5_6_7 {
                                                                       'b'
                                                                     ],
                                                           'next' => 1,
-                                                          'end' => 100,
+                                                          'end' => N,
                                                           'init' => 3
                                                         },
                                                'var_solved_in_other_mn' => {
-                                                                             'gi3100' => {
+                                                                             'gi3'.N => {
                                                                                            'b' => {
                                                                                                     'ran' => {
                                                                                                                '-1' => {
-                                                                                                                         'end' => 99,
+                                                                                                                         'end' => N_1,
                                                                                                                          'init' => 2
                                                                                                                        }
                                                                                                              },
-                                                                                                    'constant' => ''
+                                                                                                    'constant' => []
                                                                                                   }
                                                                                          }
                                                                            },
                                                'var_info' => {
-                                                               'a' => '',
-                                                               'b' => ''
+                                                               'a' => [],
+                                                               'b' => []
                                                              },
-                                               'name' => 'a3to100,b3to100,fi3100,gi3100',
+                                               'name' => 'a3to'.N.',b3to'.N.',fi3'.N.',gi3'.N,
                                                'index' => {
                                                             'a' => 0,
                                                             'b' => 0
                                                           }
                                              },
                                              {
-                                               'index' => '',
+                                               'index' => {},
                                                'name' => 'a1,h1',
                                                'var_info' => {
                                                                'a' => [
@@ -2085,21 +2199,21 @@ sub test_1_2_3_4_5_6_7 {
                                                                       ]
                                                              },
                                                'var_solved_in_other_mn' => {},
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ]
                                              },
                                              {
                                                'name' => 'b2,h3',
-                                               'index' => '',
+                                               'index' => {},
                                                'var_info' => {
                                                                'b' => [
                                                                         2
                                                                       ]
                                                              },
                                                'var_solved_in_other_mn' => {},
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h3'
                                                               ]
@@ -2111,15 +2225,15 @@ sub test_1_2_3_4_5_6_7 {
                                                                       ]
                                                              },
                                                'name' => 'a2,gi2',
-                                               'index' => '',
+                                               'index' => {},
                                                'equations' => [
                                                                 'gi2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {
                                                                              'gi2' => {
                                                                                         'b' => {
-                                                                                                 'ran' => '',
+                                                                                                 'ran' => {},
                                                                                                  'constant' => [
                                                                                                                  1,
                                                                                                                  2
@@ -2135,11 +2249,11 @@ sub test_1_2_3_4_5_6_7 {
                                                                       ]
                                                              },
                                                'name' => 'b1,h2',
-                                               'index' => '',
+                                               'index' => {},
                                                'equations' => [
                                                                 'h2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {}
                                              }
                                            ]
@@ -2185,8 +2299,8 @@ sub test_1_2_3_4_5_6_7 {
                                                             'a' => 1
                                                           },
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                 'var_solved_in_other_mn' => {},
                                              },
@@ -2194,20 +2308,20 @@ sub test_1_2_3_4_5_6_7 {
                                                'equations' => [
                                                                 'h2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_info' => {
                                                                'b' => [
                                                                         N
                                                                       ]
                                                              },
                                                'name' => 'b'.N.',h2',
-                                               'index' => '',
+                                               'index' => {},
                                                 'var_solved_in_other_mn' => {},
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'a1,h1',
-                                               'index' => '',
+                                               'index' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         1
@@ -2220,298 +2334,6 @@ sub test_1_2_3_4_5_6_7 {
                                              },
                                            ],
           'ordered_graph' => []
-    };
-
-    my $result6a = causalize($data_example6a);
-    my $result6b = causalize($data_example6b);
-
-    my $expected6a =  {
-          'all_macro_node' => [
-                                [
-                                  'a1to'.N_1,
-                                  'b1to'.N_1,
-                                  'fi1'.N_1,
-                                  'gi1'.N_1
-                                ],
-                                [
-                                  'c1to'.N_1,
-                                  'hi1'.N_1
-                                ],
-                                [
-                                  'a'.N,
-                                  'b'.N,
-                                  'fi'.N,
-                                  'gi'.N
-                                ],
-                                [
-                                  'c'.N,
-                                  'k10'
-                                ]
-                              ],
-          'internal_macro_node_ordered' => [
-                                             {
-                                               'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
-                                                             },
-                                               'name' => 'a1to'.N_1.',b1to'.N_1.',fi1'.N_1.',gi1'.N_1,
-                                               'index' => {
-                                                            'a' => 0,
-                                                            'b' => 0
-                                                          },
-                                               'ran' => {
-                                                          'end' => N_1,
-                                                          'vars' => [
-                                                                      'a',
-                                                                      'b'
-                                                                    ],
-                                                          'next' => 1,
-                                                          'init' => 1
-                                                        },
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi1'.N_1,
-                                                                'gi1'.N_1
-                                                              ]
-                                             },
-                                             {
-                                               'index' => {
-                                                            'c' => 0
-                                                          },
-                                               'name' => 'c1to'.N_1.',hi1'.N_1,
-                                               'var_info' => {
-                                                               'c' => ''
-                                                             },
-                                               'equations' => [
-                                                                'hi1'.N_1
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'hi1'.N_1 => {
-                                                                                         'a' => {
-                                                                                                  'ran' => {
-                                                                                                             '1' => {
-                                                                                                                      'end' => N,
-                                                                                                                      'init' => 2
-                                                                                                                    }
-                                                                                                           },
-                                                                                                  'constant' => ''
-                                                                                                },
-                                                                                         'b' => {
-                                                                                                  'constant' => '',
-                                                                                                  'ran' => {
-                                                                                                             '0' => {
-                                                                                                                      'end' => N_1,
-                                                                                                                      'vars' => [
-                                                                                                                                  'a',
-                                                                                                                                  'b',
-                                                                                                                                  'c'
-                                                                                                                                ],
-                                                                                                                      'init' => 1
-                                                                                                                    }
-                                                                                                           }
-                                                                                                }
-                                                                                       }
-                                                                           },
-                                               'ran' => {
-                                                          'next' => 1,
-                                                          'vars' => [
-                                                                      'c'
-                                                                    ],
-                                                          'end' => N_1,
-                                                          'init' => 1
-                                                        }
-                                             },
-                                             {
-                                               'ran' => '',
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi'.N,
-                                                                'gi'.N
-                                                              ],
-                                               'var_info' => {
-                                                               'a' => [
-                                                                        N
-                                                                      ],
-                                                               'b' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'a'.N.',b'.N.',fi'.N.',gi'.N
-                                             },
-                                             {
-                                               'var_info' => {
-                                                               'c' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'c'.N.',k10',
-                                               'ran' => '',
-                                               'equations' => [
-                                                                'k10'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'k10' => {
-                                                                                        'b' => {
-                                                                                                 'ran' => '',
-                                                                                                 'constant' => [
-                                                                                                                 N
-                                                                                                               ]
-                                                                                               }
-                                                                                      }
-                                                                           }
-                                             }
-                                           ],
-          'ordered_graph' => [
-                               'c1to'.N_1.',hi1'.N_1.' -> a1to'.N_1.',b1to'.N_1.',fi1'.N_1.',gi1'.N_1,
-                               'c1to'.N_1.',hi1'.N_1.' -> a'.N.',b'.N.',fi'.N.',gi'.N,
-                               'c'.N.',k10 -> a'.N.',b'.N.',fi'.N.',gi'.N
-                             ],
-    };
-    my $expected6b =  {
-          'all_macro_node' => [
-                                [
-                                  'a1to'.N_1,
-                                  'b1to'.N_1,
-                                  'fi19',
-                                  'gi19'
-                                ],
-                                [
-                                  'c1to'.N_1,
-                                  'hi19'
-                                ],
-                                [
-                                  'a'.N,
-                                  'b'.N,
-                                  'fi10',
-                                  'gi10'
-                                ],
-                                [
-                                  'c'.N,
-                                  'k10'
-                                ]
-                              ],
-          'internal_macro_node_ordered' => [
-                                             {
-                                               'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
-                                                             },
-                                               'name' => 'a1to'.N_1.',b1to'.N_1.',fi19,gi19',
-                                               'index' => {
-                                                            'a' => 0,
-                                                            'b' => 0
-                                                          },
-                                               'ran' => {
-                                                          'end' => N_1,
-                                                          'vars' => [
-                                                                      'a',
-                                                                      'b'
-                                                                    ],
-                                                          'next' => 1,
-                                                          'init' => 1
-                                                        },
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi19',
-                                                                'gi19'
-                                                              ]
-                                             },
-                                             {
-                                               'index' => {
-                                                            'c' => 0
-                                                          },
-                                               'name' => 'c1to'.N_1.',hi19',
-                                               'var_info' => {
-                                                               'c' => ''
-                                                             },
-                                               'equations' => [
-                                                                'hi19'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'hi19' => {
-                                                                                         'a' => {
-                                                                                                  'ran' => {
-                                                                                                             '1' => {
-                                                                                                                      'end' => N,
-                                                                                                                      'init' => 2
-                                                                                                                    }
-                                                                                                           },
-                                                                                                  'constant' => ''
-                                                                                                },
-                                                                                         'b' => {
-                                                                                                  'constant' => '',
-                                                                                                  'ran' => {
-                                                                                                             '0' => {
-                                                                                                                      'end' => N_1,
-                                                                                                                      'vars' => [
-                                                                                                                                  'a',
-                                                                                                                                  'b',
-                                                                                                                                  'c'
-                                                                                                                                ],
-                                                                                                                      'init' => 1
-                                                                                                                    }
-                                                                                                           }
-                                                                                                }
-                                                                                       }
-                                                                           },
-                                               'ran' => {
-                                                          'next' => 1,
-                                                          'vars' => [
-                                                                      'c'
-                                                                    ],
-                                                          'end' => N_1,
-                                                          'init' => 1
-                                                        }
-                                             },
-                                             {
-                                               'ran' => '',
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi10',
-                                                                'gi10'
-                                                              ],
-                                               'var_info' => {
-                                                               'a' => [
-                                                                        N
-                                                                      ],
-                                                               'b' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'a'.N.',b'.N.',fi10,gi10'
-                                             },
-                                             {
-                                               'var_info' => {
-                                                               'c' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'c'.N.',k10',
-                                               'ran' => '',
-                                               'equations' => [
-                                                                'k10'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'k10' => {
-                                                                                        'b' => {
-                                                                                                 'ran' => '',
-                                                                                                 'constant' => [
-                                                                                                                 N
-                                                                                                               ]
-                                                                                               }
-                                                                                      }
-                                                                           }
-                                             }
-                                           ],
-          'ordered_graph' => [
-                               'c1to'.N_1.',hi19 -> a1to'.N_1.',b1to'.N_1.',fi19,gi19',
-                               'c1to'.N_1.',hi19 -> a'.N.',b'.N.',fi10,gi10',
-                               'c'.N.',k10 -> a'.N.',b'.N.',fi10,gi10'
-                             ],
     };
 
     my $result7 = causalize($data_example7);
@@ -2564,13 +2386,13 @@ sub test_1_2_3_4_5_6_7 {
                                                             'b' => 0
                                                           },
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'var_solved_in_other_mn' => {
                                                                              'gi' => {
                                                                                        'b' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '1' => {
                                                                                                                     'init' => 2,
@@ -2581,8 +2403,8 @@ sub test_1_2_3_4_5_6_7 {
                                                                                      },
                                                                              'fi' => {
                                                                                        'c' => {
-                                                                                                'ran' => '',
-                                                                                                'constant' => ''
+                                                                                                'ran' => {},
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
@@ -2605,8 +2427,8 @@ sub test_1_2_3_4_5_6_7 {
                                                'equations' => [
                                                                 'h4'
                                                               ],
-                                               'ran' => '',
-                                               'index' => '',
+                                               'ran' => {},
+                                               'index' => {},
                                                'name' => 'd,h4',
                                                'var_solved_in_other_mn' => {},
                                                'var_info' => {
@@ -2614,7 +2436,7 @@ sub test_1_2_3_4_5_6_7 {
                                                              }
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
@@ -2622,8 +2444,8 @@ sub test_1_2_3_4_5_6_7 {
                                                'var_solved_in_other_mn' => {
                                                                              'h1' => {
                                                                                        'd' => {
-                                                                                                'constant' => '',
-                                                                                                'ran' => ''
+                                                                                                'constant' => [],
+                                                                                                'ran' => {}
                                                                                               }
                                                                                      }
                                                                            },
@@ -2632,7 +2454,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => ''
+                                               'index' => {}
                                              },
                                              {
                                                'var_solved_in_other_mn' => {},
@@ -2642,14 +2464,14 @@ sub test_1_2_3_4_5_6_7 {
                                                                       ]
                                                              },
                                                'name' => 'b'.N.',h2',
-                                               'index' => '',
-                                               'ran' => '',
+                                               'index' => {},
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h2'
                                                               ]
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h3'
                                                               ],
@@ -2658,7 +2480,7 @@ sub test_1_2_3_4_5_6_7 {
                                                                'c' => []
                                                              },
                                                'var_solved_in_other_mn' => {},
-                                               'index' => ''
+                                               'index' => {}
                                              }
                                            ],
           'all_macro_node' => [
@@ -2687,9 +2509,9 @@ sub test_1_2_3_4_5_6_7 {
                               ]
     };
 
-    ok(compare_internal_macro_node_ordered($expected1->{internal_macro_node_ordered},$result1->{internal_macro_node_ordered}),"Example 1: Ok internal_macro_node_ordered");
-    ok(compare_all_macro_node($expected1->{all_macro_node},$result1->{all_macro_node}),"Example 1: Ok all_macro_node");
-    ok(compare_ordered_graph($expected1->{ordered_graph},$result1->{ordered_graph},1),"Example 1: Ok ordered_graph");
+    # ok(compare_internal_macro_node_ordered($expected1->{internal_macro_node_ordered},$result1->{internal_macro_node_ordered}),"Example 1: Ok internal_macro_node_ordered");
+    # ok(compare_all_macro_node($expected1->{all_macro_node},$result1->{all_macro_node}),"Example 1: Ok all_macro_node");
+    # ok(compare_ordered_graph($expected1->{ordered_graph},$result1->{ordered_graph},1),"Example 1: Ok ordered_graph");
 
     ok(compare_internal_macro_node_ordered($expected2->{internal_macro_node_ordered},$result2->{internal_macro_node_ordered}),"Example 2: Ok internal_macro_node_ordered");
     ok(compare_all_macro_node($expected2->{all_macro_node},$result2->{all_macro_node}),"Example 2: Ok all_macro_node");
@@ -2715,21 +2537,6 @@ sub test_1_2_3_4_5_6_7 {
     ok(compare_all_macro_node($expected5->{all_macro_node},$result5->{all_macro_node}),"Example 5: Ok all_macro_node");
     ok(compare_ordered_graph($expected5->{ordered_graph},$result5->{ordered_graph},1),"Example 5: Ok ordered_graph");
 
-    ok(compare_internal_macro_node_ordered($expected6a->{internal_macro_node_ordered},$result6a->{internal_macro_node_ordered}),"Example 6a: Ok internal_macro_node_ordered");
-    ok(compare_all_macro_node($expected6a->{all_macro_node},$result6a->{all_macro_node}),"Example 6a: Ok all_macro_node");
-    ok(compare_ordered_graph($expected6a->{ordered_graph},$result6a->{ordered_graph},1),"Example 6a: Ok ordered_graph");
-
-    ok(compare_internal_macro_node_ordered($expected6b->{internal_macro_node_ordered},$result6b->{internal_macro_node_ordered}),"Example 6b: Ok internal_macro_node_ordered");
-    ok(compare_all_macro_node($expected6b->{all_macro_node},$result6b->{all_macro_node}),"Example 6b: Ok all_macro_node");
-    ok(compare_ordered_graph($expected6b->{ordered_graph},$result6b->{ordered_graph},1),"Example 6b: Ok ordered_graph");
-
-    # expected6b tiene los nombres de las ecuaciones harcoded con 10, en este caso result6b debe ser igual que al result6a
-    if (N==10) {
-        ok(compare_internal_macro_node_ordered($expected6a->{internal_macro_node_ordered},$result6b->{internal_macro_node_ordered}),"Example 6: Ok internal_macro_node_ordered");
-        ok(compare_all_macro_node($expected6a->{all_macro_node},$result6b->{all_macro_node}),"Example 6: Ok all_macro_node");
-        ok(compare_ordered_graph($expected6a->{ordered_graph},$result6b->{ordered_graph},1),"Example 6: Ok ordered_graph");
-    }
-
     ok(compare_internal_macro_node_ordered($expected7->{internal_macro_node_ordered},$result7->{internal_macro_node_ordered}),"Example 7: Ok internal_macro_node_ordered");
     ok(compare_all_macro_node($expected7->{all_macro_node},$result7->{all_macro_node}),"Example 7: Ok all_macro_node");
     ok(compare_ordered_graph($expected7->{ordered_graph},$result7->{ordered_graph},1),"Example 7: Ok ordered_graph");
@@ -2737,13 +2544,110 @@ sub test_1_2_3_4_5_6_7 {
 
 sub test_example_0 {
     my $result = causalize($data_example0);
-    warn "result data_example0:" . Dumper($result);
+    # warn "result data_example0:" . Dumper($result);
 
-    # my $expected = 
+    my $expected = {
+          'ordered_graph' => [
+                               'a2to' . N . ',b2to' . N . ',fi,gi -> a1,b1,f1,g1'
+                             ],
+          'internal_macro_node_ordered' => [
+                                             {
+                                               'ran' => {},
+                                               'var_info' => {
+                                                               'b' => [
+                                                                        1
+                                                                      ],
+                                                               'a' => [
+                                                                        1
+                                                                      ]
+                                                             },
+                                               'var_solved_in_other_mn' => {},
+                                               'index' => {},
+                                               'equations' => [
+                                                                'f1',
+                                                                'g1'
+                                                              ],
+                                               'name' => 'a1,b1,f1,g1'
+                                             },
+                                             {
+                                               'name' => 'a2to'.N.',b2to'.N.',fi,gi',
+                                               'index' => {
+                                                            'a' => 0,
+                                                            'b' => 0
+                                                          },
+                                               'equations' => [
+                                                                'fi',
+                                                                'gi'
+                                                              ],
+                                               'var_info' => {
+                                                               'b' => [],
+                                                               'a' => []
+                                                             },
+                                               'var_solved_in_other_mn' => {
+                                                                             'gi' => {
+                                                                                       'b' => {
+                                                                                                'ran' => {
+                                                                                                           '-1' => {
+                                                                                                                     'init' => 1,
+                                                                                                                     'end' => N_1
+                                                                                                                   }
+                                                                                                         },
+                                                                                                'constant' => []
+                                                                                              }
+                                                                                     }
+                                                                           },
+                                               'ran' => {
+                                                          'vars' => [
+                                                                      'a',
+                                                                      'b'
+                                                                    ],
+                                                          'next' => 1,
+                                                          'end' => N,
+                                                          'init' => 2
+                                                        }
+                                             }
+                                           ],
+          'topological_sort' => [
+                                  {
+                                    '2' => {
+                                             'name' => 'a2to' . N . ',b2to' . N . ',fi,gi',
+                                             'nodes' => [
+                                                          'a2to' . N,
+                                                          'b2to' . N,
+                                                          'fi',
+                                                          'gi'
+                                                        ]
+                                           },
+                                    '1' => {
+                                             'nodes' => [
+                                                          'a1',
+                                                          'b1',
+                                                          'f1',
+                                                          'g1'
+                                                        ],
+                                             'name' => 'a1,b1,f1,g1'
+                                           }
+                                  }
+                                ],
+          'all_macro_node' => [
+                                [
+                                  'a2to'.N,
+                                  'b2to'.N,
+                                  'fi',
+                                  'gi'
+                                ],
+                                [
+                                  'a1',
+                                  'b1',
+                                  'f1',
+                                  'g1'
+                                ]
+                              ]
+        };
 
-    # ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
-    # ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
-    # ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
+    ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
+    ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
+    ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
 }
 
 sub test_example_1 {
@@ -2762,14 +2666,14 @@ sub test_example_1 {
                                                                                                                     'init' => 2
                                                                                                                   }
                                                                                                          },
-                                                                                                'constant' => ''
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
                                                'name' => 'a1to'.N_2.',b1to'.N_2.',fi,gi',
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'ran' => {
                                                           'next' => -1,
@@ -2795,7 +2699,7 @@ sub test_example_1 {
                                                                 'f2',
                                                                 'g2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         N_1
@@ -2805,21 +2709,21 @@ sub test_example_1 {
                                                                       ]
                                                              },
                                                'name' => 'a'.N_1.',b'.N_1.',f2,g2',
-                                               'index' => ''
+                                               'index' => {}
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {
                                                                              'h2' => {
                                                                                        'a' => {
-                                                                                                'ran' => '',
+                                                                                                'ran' => {},
                                                                                                 'constant' => [
-                                                                                                                100
+                                                                                                                N
                                                                                                               ]
                                                                                               },
                                                                                        'c' => {
-                                                                                                'ran' => '',
-                                                                                                'constant' => ''
+                                                                                                'ran' => {},
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
@@ -2832,7 +2736,7 @@ sub test_example_1 {
                                                                 'h2'
                                                               ],
                                                'name' => 'b'.N.',h2',
-                                               'index' => ''
+                                               'index' => {}
                                              },
                                              {
                                                'name' => 'a'.N.',h1',
@@ -2842,11 +2746,11 @@ sub test_example_1 {
                                                                         N
                                                                       ]
                                                              },
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
-                                                'index' => ''
+                                                'index' => {}
                                              },
                                              {
                                                'var_solved_in_other_mn' => {},
@@ -2856,9 +2760,9 @@ sub test_example_1 {
                                                'var_info' => {
                                                                'c' => []
                                                              },
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'c,h3',
-                                               'index' => ''
+                                               'index' => {}
                                              }
                                            ],
           'all_macro_node' => [
@@ -2926,8 +2830,8 @@ sub test_example_2 {
           'internal_macro_node_ordered' => [
                                              {
                                                'var_solved_in_other_mn' => {},
-                                               'ran' => '',
-                                               'index' => '',
+                                               'ran' => {},
+                                               'index' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         N_1
@@ -2947,7 +2851,7 @@ sub test_example_2 {
                                                                 'f3',
                                                                 'g3'
                                                               ],
-                                               'index' => '',
+                                               'index' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         N
@@ -2956,7 +2860,7 @@ sub test_example_2 {
                                                                         N
                                                                       ]
                                                              },
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'a'.N.',b'.N.',f3,g3',
                                                'var_solved_in_other_mn' => {}
                                              },
@@ -2972,8 +2876,8 @@ sub test_example_2 {
                                                           'next' => -1
                                                         },
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'index' => {
                                                             'a' => 0,
@@ -2987,9 +2891,9 @@ sub test_example_2 {
                                                                              'fi' => {
                                                                                        'a' => {
                                                                                                 'constant' => [
-                                                                                                                100
+                                                                                                                N
                                                                                                               ],
-                                                                                                'ran' => ''
+                                                                                                'ran' => {}
                                                                                               }
                                                                                      },
                                                                              'gi' => {
@@ -2997,10 +2901,10 @@ sub test_example_2 {
                                                                                                 'ran' => {
                                                                                                            '1' => {
                                                                                                                     'init' => 2,
-                                                                                                                    'end' => 99
+                                                                                                                    'end' => N_1
                                                                                                                   }
                                                                                                          },
-                                                                                                'constant' => ''
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
@@ -3034,8 +2938,8 @@ sub test_example_3a {
                                                         },
                                                'name' => 'a2to'.N.',b1to'.N_1.',fi,gi',
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'index' => {
                                                             'a' => 1,
@@ -3048,7 +2952,7 @@ sub test_example_3a {
                                                'var_solved_in_other_mn' => {
                                                                              'gi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '0' => {
                                                                                                                     'init' => 1,
@@ -3063,7 +2967,7 @@ sub test_example_3a {
                                                                                      },
                                                                              'fi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '0' => {
                                                                                                                     'init' => 1,
@@ -3087,14 +2991,14 @@ sub test_example_3a {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'name' => 'b'.N.',h2',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {},
                                              },
                                              {
                                                'name' => 'a1,h1',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
@@ -3103,7 +3007,7 @@ sub test_example_3a {
                                                                         1
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'var_solved_in_other_mn' => {},
                                              }
                                            ],
@@ -3150,8 +3054,8 @@ sub test_example_3b {
                                                         },
                                                'name' => 'a1to'.N_1.',b1to'.N_1.',fi,gi',
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'index' => {
                                                             'a' => 0,
@@ -3164,10 +3068,10 @@ sub test_example_3b {
                                                'var_solved_in_other_mn' => {
                                                                              'gi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '1' => {
-                                                                                                                    'end' => 100,
+                                                                                                                    'end' => N,
                                                                                                                     'init' => 2
                                                                                                                   }
                                                                                                          }
@@ -3175,10 +3079,10 @@ sub test_example_3b {
                                                                                      },
                                                                              'fi' => {
                                                                                        'a' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '1' => {
-                                                                                                                    'end' => 100,
+                                                                                                                    'end' => N,
                                                                                                                     'init' => 2
                                                                                                                   }
                                                                                                          }
@@ -3195,15 +3099,15 @@ sub test_example_3b {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'name' => 'b'.N.',h2',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {}
                                              },
                                              {
                                                'var_solved_in_other_mn' => {},
                                                'name' => 'a'.N.',h1',
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
@@ -3212,7 +3116,7 @@ sub test_example_3b {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => ''
+                                               'index' => {}
                                              }
                                            ],
           'all_macro_node' => [
@@ -3267,8 +3171,8 @@ sub test_example_4 {
           'internal_macro_node_ordered' => [
                                              {
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'equations' => [
                                                                 'fi',
@@ -3297,7 +3201,7 @@ sub test_example_4 {
                                                                                                      'init' => 1
                                                                                                    }
                                                                                          },
-                                                                                'constant' => ''
+                                                                                'constant' => []
                                                                               }
                                                                      }
                                                            },
@@ -3309,17 +3213,17 @@ sub test_example_4 {
                                                                         1
                                                                       ]
                                                              },
-                                               'index' => '',
+                                               'index' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'a1,h1',
                                                'var_solved_in_other_mn' => {},
                                              },
                                              {
-                                               'index' => '',
-                                               'ran' => '',
+                                               'index' => {},
+                                               'ran' => {},
                                                'name' => 'b1,h2',
                                                'equations' => [
                                                                 'h2'
@@ -3348,10 +3252,10 @@ sub test_example_4_ab {
     my $expected = {
           'all_macro_node' => [
                                 [
-                                  'a3to100',
-                                  'b3to100',
-                                  'fi3100',
-                                  'gi3100'
+                                  'a3to'.N,
+                                  'b3to'.N,
+                                  'fi3'.N,
+                                  'gi3'.N
                                 ],
                                 [
                                   'a1',
@@ -3373,10 +3277,10 @@ sub test_example_4_ab {
           'topological_sort' => [
                                   {
                                     '1' => [
-                                             'a3to100',
-                                             'b3to100',
-                                             'fi3100',
-                                             'gi3100'
+                                             'a3to'.N,
+                                             'b3to'.N,
+                                             'fi3'.N,
+                                             'gi3'.N
                                            ],
                                     '3' => [
                                              'a1',
@@ -3406,15 +3310,15 @@ sub test_example_4_ab {
                                   }
                                 ],
           'ordered_graph' => [
-                               'a3to100,b3to100,fi3100,gi3100 -> b2,h3',
+                               'a3to'.N.',b3to'.N.',fi3'.N.',gi3'.N.' -> b2,h3',
                                'a2,gi2 -> b1,h2',
                                'a2,gi2 -> b2,h3'
                              ],
           'internal_macro_node_ordered' => [
                                              {
                                                'equations' => [
-                                                                'fi3100',
-                                                                'gi3100'
+                                                                'fi3'.N,
+                                                                'gi3'.N
                                                               ],
                                                'ran' => {
                                                           'vars' => [
@@ -3422,34 +3326,34 @@ sub test_example_4_ab {
                                                                       'b'
                                                                     ],
                                                           'next' => 1,
-                                                          'end' => 100,
+                                                          'end' => N,
                                                           'init' => 3
                                                         },
                                                'var_solved_in_other_mn' => {
-                                                                             'gi3100' => {
+                                                                             'gi3'.N => {
                                                                                            'b' => {
                                                                                                     'ran' => {
                                                                                                                '-1' => {
-                                                                                                                         'end' => 99,
+                                                                                                                         'end' => N_1,
                                                                                                                          'init' => 2
                                                                                                                        }
                                                                                                              },
-                                                                                                    'constant' => ''
+                                                                                                    'constant' => []
                                                                                                   }
                                                                                          }
                                                                            },
                                                'var_info' => {
-                                                               'a' => '',
-                                                               'b' => ''
+                                                               'a' => [],
+                                                               'b' => []
                                                              },
-                                               'name' => 'a3to100,b3to100,fi3100,gi3100',
+                                               'name' => 'a3to'.N.',b3to'.N.',fi3'.N.',gi3'.N,
                                                'index' => {
                                                             'a' => 0,
                                                             'b' => 0
                                                           }
                                              },
                                              {
-                                               'index' => '',
+                                               'index' => {},
                                                'name' => 'a1,h1',
                                                'var_info' => {
                                                                'a' => [
@@ -3457,21 +3361,21 @@ sub test_example_4_ab {
                                                                       ]
                                                              },
                                                'var_solved_in_other_mn' => {},
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ]
                                              },
                                              {
                                                'name' => 'b2,h3',
-                                               'index' => '',
+                                               'index' => {},
                                                'var_info' => {
                                                                'b' => [
                                                                         2
                                                                       ]
                                                              },
                                                'var_solved_in_other_mn' => {},
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h3'
                                                               ]
@@ -3483,15 +3387,15 @@ sub test_example_4_ab {
                                                                       ]
                                                              },
                                                'name' => 'a2,gi2',
-                                               'index' => '',
+                                               'index' => {},
                                                'equations' => [
                                                                 'gi2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {
                                                                              'gi2' => {
                                                                                         'b' => {
-                                                                                                 'ran' => '',
+                                                                                                 'ran' => {},
                                                                                                  'constant' => [
                                                                                                                  1,
                                                                                                                  2
@@ -3507,19 +3411,15 @@ sub test_example_4_ab {
                                                                       ]
                                                              },
                                                'name' => 'b1,h2',
-                                               'index' => '',
+                                               'index' => {},
                                                'equations' => [
                                                                 'h2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_solved_in_other_mn' => {}
                                              }
                                            ]
     };
-
-    # ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result_a->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
-    # ok(compare_all_macro_node($expected->{all_macro_node},$result_a->{all_macro_node}),"Ok all_macro_node");
-    # ok(compare_ordered_graph($expected->{ordered_graph},$result_a->{ordered_graph},1),"Ok ordered_graph");
 
     ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result_b->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
     ok(compare_all_macro_node($expected->{all_macro_node},$result_b->{all_macro_node}),"Ok all_macro_node");
@@ -3527,7 +3427,8 @@ sub test_example_4_ab {
 }
 
 sub test_example_5 {
-    my $result = causalize($data_example5);warn Dumper($result);
+    my $result = causalize($data_example5);
+    # warn Dumper($result);
     my $expected =  {
           'all_macro_node' => [
                                 [
@@ -3566,8 +3467,8 @@ sub test_example_5 {
                                                             'a' => 1
                                                           },
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                 'var_solved_in_other_mn' => {},
                                              },
@@ -3575,20 +3476,20 @@ sub test_example_5 {
                                                'equations' => [
                                                                 'h2'
                                                               ],
-                                               'ran' => '',
+                                               'ran' => {},
                                                'var_info' => {
                                                                'b' => [
                                                                         N
                                                                       ]
                                                              },
                                                'name' => 'b'.N.',h2',
-                                               'index' => '',
+                                               'index' => {},
                                                 'var_solved_in_other_mn' => {},
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'name' => 'a1,h1',
-                                               'index' => '',
+                                               'index' => {},
                                                'var_info' => {
                                                                'a' => [
                                                                         1
@@ -3608,313 +3509,313 @@ sub test_example_5 {
     ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
 }
 
-sub test_example_6a {
-    my $result = causalize($data_example6a);
-    warn Dumper($result);
-    # return;
-    my $expected =  {
-          'all_macro_node' => [
-                                [
-                                  'a1to'.N_1,
-                                  'b1to'.N_1,
-                                  'fi1'.N_1,
-                                  'gi1'.N_1
-                                ],
-                                [
-                                  'c1to'.N_1,
-                                  'hi1'.N_1
-                                ],
-                                [
-                                  'a'.N,
-                                  'b'.N,
-                                  'fi'.N,
-                                  'gi'.N
-                                ],
-                                [
-                                  'c'.N,
-                                  'k10'
-                                ]
-                              ],
-          'internal_macro_node_ordered' => [
-                                             {
-                                               'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
-                                                             },
-                                               'name' => 'a1to'.N_1.',b1to'.N_1.',fi1'.N_1.',gi1'.N_1,
-                                               'index' => {
-                                                            'a' => 0,
-                                                            'b' => 0
-                                                          },
-                                               'ran' => {
-                                                          'end' => N_1,
-                                                          'vars' => [
-                                                                      'a',
-                                                                      'b'
-                                                                    ],
-                                                          'next' => 1,
-                                                          'init' => 1
-                                                        },
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi1'.N_1,
-                                                                'gi1'.N_1
-                                                              ]
-                                             },
-                                             {
-                                               'index' => {
-                                                            'c' => 0
-                                                          },
-                                               'name' => 'c1to'.N_1.',hi1'.N_1,
-                                               'var_info' => {
-                                                               'c' => ''
-                                                             },
-                                               'equations' => [
-                                                                'hi1'.N_1
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'hi1'.N_1 => {
-                                                                                         'a' => {
-                                                                                                  'ran' => {
-                                                                                                             '1' => {
-                                                                                                                      'end' => N,
-                                                                                                                      'init' => 2
-                                                                                                                    }
-                                                                                                           },
-                                                                                                  'constant' => ''
-                                                                                                },
-                                                                                         'b' => {
-                                                                                                  'constant' => '',
-                                                                                                  'ran' => {
-                                                                                                             '0' => {
-                                                                                                                      'end' => N_1,
-                                                                                                                      'vars' => [
-                                                                                                                                  'a',
-                                                                                                                                  'b',
-                                                                                                                                  'c'
-                                                                                                                                ],
-                                                                                                                      'init' => 1
-                                                                                                                    }
-                                                                                                           }
-                                                                                                }
-                                                                                       }
-                                                                           },
-                                               'ran' => {
-                                                          'next' => 1,
-                                                          'vars' => [
-                                                                      'c'
-                                                                    ],
-                                                          'end' => N_1,
-                                                          'init' => 1
-                                                        }
-                                             },
-                                             {
-                                               'ran' => '',
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi'.N,
-                                                                'gi'.N
-                                                              ],
-                                               'var_info' => {
-                                                               'a' => [
-                                                                        N
-                                                                      ],
-                                                               'b' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'a'.N.',b'.N.',fi'.N.',gi'.N
-                                             },
-                                             {
-                                               'var_info' => {
-                                                               'c' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'c'.N.',k10',
-                                               'ran' => '',
-                                               'equations' => [
-                                                                'k10'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'k10' => {
-                                                                                        'b' => {
-                                                                                                 'ran' => '',
-                                                                                                 'constant' => [
-                                                                                                                 N
-                                                                                                               ]
-                                                                                               }
-                                                                                      }
-                                                                           }
-                                             }
-                                           ],
-          'ordered_graph' => [
-                               'c1to'.N_1.',hi1'.N_1.' -> a1to'.N_1.',b1to'.N_1.',fi1'.N_1.',gi1'.N_1,
-                               'c1to'.N_1.',hi1'.N_1.' -> a'.N.',b'.N.',fi'.N.',gi'.N,
-                               'c'.N.',k10 -> a'.N.',b'.N.',fi'.N.',gi'.N
-                             ],
-    };
+# sub test_example_6a {
+#     my $result = causalize($data_example6a);
+#     # warn Dumper($result);
+#     # return;
+#     my $expected =  {
+#           'all_macro_node' => [
+#                                 [
+#                                   'a1to'.N_1,
+#                                   'b1to'.N_1,
+#                                   'fi1'.N_1,
+#                                   'gi1'.N_1
+#                                 ],
+#                                 [
+#                                   'c1to'.N_1,
+#                                   'hi1'.N_1
+#                                 ],
+#                                 [
+#                                   'a'.N,
+#                                   'b'.N,
+#                                   'fi'.N,
+#                                   'gi'.N
+#                                 ],
+#                                 [
+#                                   'c'.N,
+#                                   'k10'
+#                                 ]
+#                               ],
+#           'internal_macro_node_ordered' => [
+#                                              {
+#                                                'var_info' => {
+#                                                                'b' => [],
+#                                                                'a' => []
+#                                                              },
+#                                                'name' => 'a1to'.N_1.',b1to'.N_1.',fi1'.N_1.',gi1'.N_1,
+#                                                'index' => {
+#                                                             'a' => 0,
+#                                                             'b' => 0
+#                                                           },
+#                                                'ran' => {
+#                                                           'end' => N_1,
+#                                                           'vars' => [
+#                                                                       'a',
+#                                                                       'b'
+#                                                                     ],
+#                                                           'next' => 1,
+#                                                           'init' => 1
+#                                                         },
+#                                                'var_solved_in_other_mn' => {},
+#                                                'equations' => [
+#                                                                 'fi1'.N_1,
+#                                                                 'gi1'.N_1
+#                                                               ]
+#                                              },
+#                                              {
+#                                                'index' => {
+#                                                             'c' => 0
+#                                                           },
+#                                                'name' => 'c1to'.N_1.',hi1'.N_1,
+#                                                'var_info' => {
+#                                                                'c' => []
+#                                                              },
+#                                                'equations' => [
+#                                                                 'hi1'.N_1
+#                                                               ],
+#                                                'var_solved_in_other_mn' => {
+#                                                                              'hi1'.N_1 => {
+#                                                                                          'a' => {
+#                                                                                                   'ran' => {
+#                                                                                                              '1' => {
+#                                                                                                                       'end' => N,
+#                                                                                                                       'init' => 2
+#                                                                                                                     }
+#                                                                                                            },
+#                                                                                                   'constant' => []
+#                                                                                                 },
+#                                                                                          'b' => {
+#                                                                                                   'constant' => [],
+#                                                                                                   'ran' => {
+#                                                                                                              '0' => {
+#                                                                                                                       'end' => N_1,
+#                                                                                                                       'vars' => [
+#                                                                                                                                   'a',
+#                                                                                                                                   'b',
+#                                                                                                                                   'c'
+#                                                                                                                                 ],
+#                                                                                                                       'init' => 1
+#                                                                                                                     }
+#                                                                                                            }
+#                                                                                                 }
+#                                                                                        }
+#                                                                            },
+#                                                'ran' => {
+#                                                           'next' => 1,
+#                                                           'vars' => [
+#                                                                       'c'
+#                                                                     ],
+#                                                           'end' => N_1,
+#                                                           'init' => 1
+#                                                         }
+#                                              },
+#                                              {
+#                                                'ran' => {},
+#                                                'var_solved_in_other_mn' => {},
+#                                                'equations' => [
+#                                                                 'fi'.N,
+#                                                                 'gi'.N
+#                                                               ],
+#                                                'var_info' => {
+#                                                                'a' => [
+#                                                                         N
+#                                                                       ],
+#                                                                'b' => [
+#                                                                         N
+#                                                                       ]
+#                                                              },
+#                                                'index' => {},
+#                                                'name' => 'a'.N.',b'.N.',fi'.N.',gi'.N
+#                                              },
+#                                              {
+#                                                'var_info' => {
+#                                                                'c' => [
+#                                                                         N
+#                                                                       ]
+#                                                              },
+#                                                'index' => {},
+#                                                'name' => 'c'.N.',k10',
+#                                                'ran' => {},
+#                                                'equations' => [
+#                                                                 'k10'
+#                                                               ],
+#                                                'var_solved_in_other_mn' => {
+#                                                                              'k10' => {
+#                                                                                         'b' => {
+#                                                                                                  'ran' => {},
+#                                                                                                  'constant' => [
+#                                                                                                                  N
+#                                                                                                                ]
+#                                                                                                }
+#                                                                                       }
+#                                                                            }
+#                                              }
+#                                            ],
+#           'ordered_graph' => [
+#                                'c1to'.N_1.',hi1'.N_1.' -> a1to'.N_1.',b1to'.N_1.',fi1'.N_1.',gi1'.N_1,
+#                                'c1to'.N_1.',hi1'.N_1.' -> a'.N.',b'.N.',fi'.N.',gi'.N,
+#                                'c'.N.',k10 -> a'.N.',b'.N.',fi'.N.',gi'.N
+#                              ],
+#     };
 
-    ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
-    ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
-    ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
-}
+#     ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
+#     ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
+#     ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
+# }
 
-sub test_example_6b {
-    my $result = causalize($data_example6b);
-    # warn Dumper($result);
-    # return;
-    my $expected =  {
-          'all_macro_node' => [
-                                [
-                                  'a1to'.N_1,
-                                  'b1to'.N_1,
-                                  'fi19',
-                                  'gi19'
-                                ],
-                                [
-                                  'c1to'.N_1,
-                                  'hi19'
-                                ],
-                                [
-                                  'a'.N,
-                                  'b'.N,
-                                  'fi10',
-                                  'gi10'
-                                ],
-                                [
-                                  'c'.N,
-                                  'k10'
-                                ]
-                              ],
-          'internal_macro_node_ordered' => [
-                                             {
-                                               'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
-                                                             },
-                                               'name' => 'a1to'.N_1.',b1to'.N_1.',fi19,gi19',
-                                               'index' => {
-                                                            'a' => 0,
-                                                            'b' => 0
-                                                          },
-                                               'ran' => {
-                                                          'end' => N_1,
-                                                          'vars' => [
-                                                                      'a',
-                                                                      'b'
-                                                                    ],
-                                                          'next' => 1,
-                                                          'init' => 1
-                                                        },
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi19',
-                                                                'gi19'
-                                                              ]
-                                             },
-                                             {
-                                               'index' => {
-                                                            'c' => 0
-                                                          },
-                                               'name' => 'c1to'.N_1.',hi19',
-                                               'var_info' => {
-                                                               'c' => ''
-                                                             },
-                                               'equations' => [
-                                                                'hi19'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'hi19' => {
-                                                                                         'a' => {
-                                                                                                  'ran' => {
-                                                                                                             '1' => {
-                                                                                                                      'end' => N,
-                                                                                                                      'init' => 2
-                                                                                                                    }
-                                                                                                           },
-                                                                                                  'constant' => ''
-                                                                                                },
-                                                                                         'b' => {
-                                                                                                  'constant' => '',
-                                                                                                  'ran' => {
-                                                                                                             '0' => {
-                                                                                                                      'end' => N_1,
-                                                                                                                      'vars' => [
-                                                                                                                                  'a',
-                                                                                                                                  'b',
-                                                                                                                                  'c'
-                                                                                                                                ],
-                                                                                                                      'init' => 1
-                                                                                                                    }
-                                                                                                           }
-                                                                                                }
-                                                                                       }
-                                                                           },
-                                               'ran' => {
-                                                          'next' => 1,
-                                                          'vars' => [
-                                                                      'c'
-                                                                    ],
-                                                          'end' => N_1,
-                                                          'init' => 1
-                                                        }
-                                             },
-                                             {
-                                               'ran' => '',
-                                               'var_solved_in_other_mn' => {},
-                                               'equations' => [
-                                                                'fi10',
-                                                                'gi10'
-                                                              ],
-                                               'var_info' => {
-                                                               'a' => [
-                                                                        N
-                                                                      ],
-                                                               'b' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'a'.N.',b'.N.',fi10,gi10'
-                                             },
-                                             {
-                                               'var_info' => {
-                                                               'c' => [
-                                                                        N
-                                                                      ]
-                                                             },
-                                               'index' => '',
-                                               'name' => 'c'.N.',k10',
-                                               'ran' => '',
-                                               'equations' => [
-                                                                'k10'
-                                                              ],
-                                               'var_solved_in_other_mn' => {
-                                                                             'k10' => {
-                                                                                        'b' => {
-                                                                                                 'ran' => '',
-                                                                                                 'constant' => [
-                                                                                                                 N
-                                                                                                               ]
-                                                                                               }
-                                                                                      }
-                                                                           }
-                                             }
-                                           ],
-          'ordered_graph' => [
-                               'c1to'.N_1.',hi19 -> a1to'.N_1.',b1to'.N_1.',fi19,gi19',
-                               'c1to'.N_1.',hi19 -> a'.N.',b'.N.',fi10,gi10',
-                               'c'.N.',k10 -> a'.N.',b'.N.',fi10,gi10'
-                             ],
-    };
+# sub test_example_6b {
+#     my $result = causalize($data_example6b);
+#     # warn Dumper($result);
+#     # return;
+#     my $expected =  {
+#           'all_macro_node' => [
+#                                 [
+#                                   'a1to'.N_1,
+#                                   'b1to'.N_1,
+#                                   'fi19',
+#                                   'gi19'
+#                                 ],
+#                                 [
+#                                   'c1to'.N_1,
+#                                   'hi19'
+#                                 ],
+#                                 [
+#                                   'a'.N,
+#                                   'b'.N,
+#                                   'fi10',
+#                                   'gi10'
+#                                 ],
+#                                 [
+#                                   'c'.N,
+#                                   'k10'
+#                                 ]
+#                               ],
+#           'internal_macro_node_ordered' => [
+#                                              {
+#                                                'var_info' => {
+#                                                                'b' => [],
+#                                                                'a' => []
+#                                                              },
+#                                                'name' => 'a1to'.N_1.',b1to'.N_1.',fi19,gi19',
+#                                                'index' => {
+#                                                             'a' => 0,
+#                                                             'b' => 0
+#                                                           },
+#                                                'ran' => {
+#                                                           'end' => N_1,
+#                                                           'vars' => [
+#                                                                       'a',
+#                                                                       'b'
+#                                                                     ],
+#                                                           'next' => 1,
+#                                                           'init' => 1
+#                                                         },
+#                                                'var_solved_in_other_mn' => {},
+#                                                'equations' => [
+#                                                                 'fi19',
+#                                                                 'gi19'
+#                                                               ]
+#                                              },
+#                                              {
+#                                                'index' => {
+#                                                             'c' => 0
+#                                                           },
+#                                                'name' => 'c1to'.N_1.',hi19',
+#                                                'var_info' => {
+#                                                                'c' => []
+#                                                              },
+#                                                'equations' => [
+#                                                                 'hi19'
+#                                                               ],
+#                                                'var_solved_in_other_mn' => {
+#                                                                              'hi19' => {
+#                                                                                          'a' => {
+#                                                                                                   'ran' => {
+#                                                                                                              '1' => {
+#                                                                                                                       'end' => N,
+#                                                                                                                       'init' => 2
+#                                                                                                                     }
+#                                                                                                            },
+#                                                                                                   'constant' => []
+#                                                                                                 },
+#                                                                                          'b' => {
+#                                                                                                   'constant' => [],
+#                                                                                                   'ran' => {
+#                                                                                                              '0' => {
+#                                                                                                                       'end' => N_1,
+#                                                                                                                       'vars' => [
+#                                                                                                                                   'a',
+#                                                                                                                                   'b',
+#                                                                                                                                   'c'
+#                                                                                                                                 ],
+#                                                                                                                       'init' => 1
+#                                                                                                                     }
+#                                                                                                            }
+#                                                                                                 }
+#                                                                                        }
+#                                                                            },
+#                                                'ran' => {
+#                                                           'next' => 1,
+#                                                           'vars' => [
+#                                                                       'c'
+#                                                                     ],
+#                                                           'end' => N_1,
+#                                                           'init' => 1
+#                                                         }
+#                                              },
+#                                              {
+#                                                'ran' => {},
+#                                                'var_solved_in_other_mn' => {},
+#                                                'equations' => [
+#                                                                 'fi10',
+#                                                                 'gi10'
+#                                                               ],
+#                                                'var_info' => {
+#                                                                'a' => [
+#                                                                         N
+#                                                                       ],
+#                                                                'b' => [
+#                                                                         N
+#                                                                       ]
+#                                                              },
+#                                                'index' => {},
+#                                                'name' => 'a'.N.',b'.N.',fi10,gi10'
+#                                              },
+#                                              {
+#                                                'var_info' => {
+#                                                                'c' => [
+#                                                                         N
+#                                                                       ]
+#                                                              },
+#                                                'index' => {},
+#                                                'name' => 'c'.N.',k10',
+#                                                'ran' => {},
+#                                                'equations' => [
+#                                                                 'k10'
+#                                                               ],
+#                                                'var_solved_in_other_mn' => {
+#                                                                              'k10' => {
+#                                                                                         'b' => {
+#                                                                                                  'ran' => {},
+#                                                                                                  'constant' => [
+#                                                                                                                  N
+#                                                                                                                ]
+#                                                                                                }
+#                                                                                       }
+#                                                                            }
+#                                              }
+#                                            ],
+#           'ordered_graph' => [
+#                                'c1to'.N_1.',hi19 -> a1to'.N_1.',b1to'.N_1.',fi19,gi19',
+#                                'c1to'.N_1.',hi19 -> a'.N.',b'.N.',fi10,gi10',
+#                                'c'.N.',k10 -> a'.N.',b'.N.',fi10,gi10'
+#                              ],
+#     };
 
-    ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
-    ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
-    ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
-}
+#     ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
+#     ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
+#     ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
+# }
 # Example 7
 # model a
 #     Real a[N],b[N],c,d;
@@ -3930,7 +3831,7 @@ sub test_example_6b {
 # end a;
 sub test_example_7 {
     my $result = causalize($data_example7);
-    warn Dumper($result);
+    # warn Dumper($result);
     # return;
     my $expected = {
           'ordered_graph' => [
@@ -3980,13 +3881,13 @@ sub test_example_7 {
                                                             'b' => 0
                                                           },
                                                'var_info' => {
-                                                               'b' => '',
-                                                               'a' => ''
+                                                               'b' => [],
+                                                               'a' => []
                                                              },
                                                'var_solved_in_other_mn' => {
                                                                              'gi' => {
                                                                                        'b' => {
-                                                                                                'constant' => '',
+                                                                                                'constant' => [],
                                                                                                 'ran' => {
                                                                                                            '1' => {
                                                                                                                     'init' => 2,
@@ -3997,8 +3898,8 @@ sub test_example_7 {
                                                                                      },
                                                                              'fi' => {
                                                                                        'c' => {
-                                                                                                'ran' => '',
-                                                                                                'constant' => ''
+                                                                                                'ran' => {},
+                                                                                                'constant' => []
                                                                                               }
                                                                                      }
                                                                            },
@@ -4021,8 +3922,8 @@ sub test_example_7 {
                                                'equations' => [
                                                                 'h4'
                                                               ],
-                                               'ran' => '',
-                                               'index' => '',
+                                               'ran' => {},
+                                               'index' => {},
                                                'name' => 'd,h4',
                                                'var_solved_in_other_mn' => {},
                                                'var_info' => {
@@ -4030,7 +3931,7 @@ sub test_example_7 {
                                                              }
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h1'
                                                               ],
@@ -4038,8 +3939,8 @@ sub test_example_7 {
                                                'var_solved_in_other_mn' => {
                                                                              'h1' => {
                                                                                        'd' => {
-                                                                                                'constant' => '',
-                                                                                                'ran' => ''
+                                                                                                'constant' => [],
+                                                                                                'ran' => {}
                                                                                               }
                                                                                      }
                                                                            },
@@ -4048,7 +3949,7 @@ sub test_example_7 {
                                                                         N
                                                                       ]
                                                              },
-                                               'index' => ''
+                                               'index' => {}
                                              },
                                              {
                                                'var_solved_in_other_mn' => {},
@@ -4058,14 +3959,14 @@ sub test_example_7 {
                                                                       ]
                                                              },
                                                'name' => 'b'.N.',h2',
-                                               'index' => '',
-                                               'ran' => '',
+                                               'index' => {},
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h2'
                                                               ]
                                              },
                                              {
-                                               'ran' => '',
+                                               'ran' => {},
                                                'equations' => [
                                                                 'h3'
                                                               ],
@@ -4074,7 +3975,7 @@ sub test_example_7 {
                                                                'c' => []
                                                              },
                                                'var_solved_in_other_mn' => {},
-                                               'index' => ''
+                                               'index' => {}
                                              }
                                            ],
           'all_macro_node' => [
@@ -4106,17 +4007,6 @@ sub test_example_7 {
     ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
     ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
     ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
-}
-
-sub test_example_8 {
-    my $result = causalize($data_example8);
-    warn Dumper($result);
-    # return;
-    # my $expected = 
-
-    # ok(compare_internal_macro_node_ordered($expected->{internal_macro_node_ordered},$result->{internal_macro_node_ordered}),"Ok internal_macro_node_ordered");
-    # ok(compare_all_macro_node($expected->{all_macro_node},$result->{all_macro_node}),"Ok all_macro_node");
-    # ok(compare_ordered_graph($expected->{ordered_graph},$result->{ordered_graph},1),"Ok ordered_graph");
 }
 
 sub compare_internal_macro_node_ordered {

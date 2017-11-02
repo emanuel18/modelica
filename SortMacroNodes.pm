@@ -7,13 +7,14 @@ use Graph::Undirected;
 use constant M => 10;
 use constant N => 10;
 use constant PRINT => 0;
+use constant DELIMITER => ' -> ';
 use BuildGraph qw(:build_graph);
 use Util qw(:all);
 use Array::Utils qw(:all);
 use Params::Validate qw(:all);
 
 use Exporter qw(import);
-our @EXPORT_OK = qw( sort_macro_nodes );
+our @EXPORT_OK = qw( sort_macro_nodes DELIMITER );
 our %EXPORT_TAGS = (
     'all' => \@EXPORT_OK,
 );
@@ -29,11 +30,9 @@ sub sort_macro_nodes {
         @_,
         {
             macro_nodes  => 1,
-            init_data    => 1,
         }
     );
     my $macro_nodes = $args{macro_nodes};
-    my $init_data = $args{init_data};
     my @order = ();
 
     foreach my $node_to_be_ordered (@{$macro_nodes}) {
@@ -46,7 +45,7 @@ sub sort_macro_nodes {
                 # la variable esta dentro de un for
                 my $var_solved_ran = $node_to_be_ordered->{var_solved_in_other_mn}->{$eq}->{$var}->{ran};
 
-                if($var_solved_ran){
+                if(keys %{$var_solved_ran}){
 
                     foreach my $index (keys %{$var_solved_ran}) {
 
@@ -64,7 +63,9 @@ sub sort_macro_nodes {
                           
                           # me fijo si el otro macronodo esta dentro de un for
                           print "####################  init:$init end:$end  \n" if (PRINT);
-                          if($other_mn->{ran}) {
+                          print "####################  other_mn: " . Dumper($other_mn) if (PRINT);
+
+                          if(keys %{$other_mn->{ran}}) {
                               my $exists = 0;
                               # me fijo si la variable esta dentro de dicho for
                               foreach my $v (@{$other_mn->{ran}->{vars}}) {
@@ -88,20 +89,23 @@ sub sort_macro_nodes {
                                 ($init < $end_other_mn and $end_other_mn < $end) or 
                                 ($init <= $init_other_mn and $end_other_mn <= $end)
                               ){
-                                  push @order, $node_to_be_ordered->{name} . " -> " . $other_mn->{name};
+                                  push @order, $node_to_be_ordered->{name} . DELIMITER . $other_mn->{name};
+                                  # push @order, {$node_to_be_ordered->{name} => $other_mn->{name}};
                                   print "\t" . $node_to_be_ordered->{name} . " debe resolverse ante de $var -> " . $other_mn->{name}. "\n" if (PRINT);
                               }
 
                           }
                           else {
                               my @indices = ();
-                              if ($other_mn->{var_info}->{$var}) {
+
+                              if (keys %{$other_mn->{var_info}} && $other_mn->{var_info}->{$var}) {
                                   @indices = @{$other_mn->{var_info}->{$var}};
                               }
                               if(@indices) {
                                   foreach my $index (@indices) {
                                       if(defined $index and ($init <= $index and $index <= $end)) {
-                                          push @order, $node_to_be_ordered->{name} . " -> " . $other_mn->{name};
+                                          push @order, $node_to_be_ordered->{name} . DELIMITER . $other_mn->{name};
+                                          # push @order, {$node_to_be_ordered->{name} => $other_mn->{name}};
                                           print "\t" . $node_to_be_ordered->{name} . " debe resolverse ante de $var -> " . $other_mn->{name}. "\n" if (PRINT);
                                           last;
                                       }
@@ -113,9 +117,8 @@ sub sort_macro_nodes {
                     }
                 }
                 
-
                 my $var_constant = $node_to_be_ordered->{var_solved_in_other_mn}->{$eq}->{$var}->{constant};
-                if($var_constant){
+                if(@{$var_constant}){
 
                     my @constant = @{$var_constant};
 
@@ -125,7 +128,8 @@ sub sort_macro_nodes {
                             next if ($node_to_be_ordered eq $other_mn);
                                
                                 if(find_variable_in_graph($other_mn,$var,$c)) {
-                                    push @order, $node_to_be_ordered->{name} . " -> " . $other_mn->{name};
+                                    push @order, $node_to_be_ordered->{name} . DELIMITER . $other_mn->{name};
+                                    # push @order, {$node_to_be_ordered->{name} => $other_mn->{name}};
                                     print "\t" . $node_to_be_ordered->{name} . " debe resolverse ante de $var($c) -> " . $other_mn->{name}. "\n" if (PRINT);
                                 }
                         }
@@ -133,12 +137,13 @@ sub sort_macro_nodes {
                     
                 }
                 # es una constante como C
-                elsif (defined $var_constant and $var_constant eq ''){
+                elsif (!@{$var_constant}){
                     foreach my $other_mn (@{$macro_nodes}) {
                         next if ($node_to_be_ordered eq $other_mn);
 
                         if(find_variable_in_graph($other_mn,$var)) {
-                            push @order, $node_to_be_ordered->{name} . " -> " . $other_mn->{name};
+                            push @order, $node_to_be_ordered->{name} . DELIMITER . $other_mn->{name};
+                            # push @order, {$node_to_be_ordered->{name} => $other_mn->{name}};
                             print "\t" . $node_to_be_ordered->{name} . " debe resolverse ante de " . $other_mn->{name}. "\n" if (PRINT);
                         }
                     }

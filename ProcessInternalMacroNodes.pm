@@ -4,21 +4,20 @@ use strict;
 use warnings;
 use Data::Dumper;
 use Graph::Undirected;
-use constant N => 10;
+use constant N => 100;
 use lib '/Users/emanuel/Documents/personal/facultad/causalize/';
 use Array::Utils qw(:all);
 use Scalar::Util 'looks_like_number'; 
 use Params::Validate qw(:all);
-use constant DEBUG_PIMN => 1;
+use constant DEBUG_PIMN => 0;
 
 =item resolve_internal_macro_node
 
 tomo un macro_node que es el que voy a resolver internamente, adicionalmente necesito: 
   - init_data que hace referencia a los datos originales
   - graph que es el grafo creado a partir de init_data en donde tengo los nodos formados
- por ecuaciones y variables(estas representan a un determinado indice, en caso de que corresponda)
-  - graph_info: tiene informacion adicional del grafo, nos indica que indice debe usar cada variable, un listado de todas las
-  ecuaciones y otro listado con todas las variables.
+ por ecuaciones y variables(estas representan a un determinado indice, en caso de que corresponda), 
+ tambien tiene informacion adicional del grafo, nos indica que indice debe usar cada variable.
   - all_macro_node esta formada por todos los macronodos, los necesitos para el orden interno del mn que estoy procesando
 =cut
 sub new {
@@ -28,12 +27,35 @@ sub new {
     my $self = {
         init_data      => undef,
         graph          => undef,
-        graph_info     => undef,
         all_macro_node => undef,
         @_
     };
 
     bless $self, $class;
+    
+    my (@all_equations,@all_variables);
+    my @vertices = $self->{graph}->vertices;
+
+    foreach my $node (@vertices) {
+        my $type = $self->{graph}->get_vertex_attribute($node, 'type');
+        if ($type eq 'EQ') {
+            push @all_equations, $node;
+        } elsif($type eq 'VAR') {
+            push @all_variables, $node;
+        } else {
+            die "Error. Node: $node type: $type";
+        }
+
+        my $index_var = $self->{graph}->get_vertex_attribute($node, 'index_var');
+        if(defined $index_var) {
+            my $original_var = $self->{graph}->get_vertex_attribute($node, 'original_var');
+            $self->{graph_info}->{index}->{$original_var} = $index_var;
+        }
+    }
+
+    $self->{all_equations} = \@all_equations;
+    $self->{all_variables} = \@all_variables;
+
     return $self;
 }
 
@@ -55,26 +77,21 @@ sub resolve_internal_macro_node {
 
     my $result;
 
-    my @all_equations = @{$graph_info->{equations}};
-    my @all_variables = @{$graph_info->{variables}};    
-
-    my @equations = intersect(@all_equations, @{$macro_node});
-    my @variables = intersect(@all_variables, @{$macro_node});
+    my @equations = intersect(@{$class->{all_equations}}, @{$macro_node});
+    my @variables = intersect(@{$class->{all_variables}}, @{$macro_node});
 
     return unless(@equations);
 
-    my $origin_vars;# tiene como key la variable original y como valor las constantes que puedan haber
+    my $origin_vars = {};# tiene como key la variable original y como valor las constantes que puedan haber
     foreach my $e (@equations) {
         foreach my $v (@variables) {
             my $o_var = $graph->get_vertex_attribute($v, 'original_var');
-
-
             # en este caso puedo tener que $origin_vars tiene a=>[1,2] y me viene
             # como $init_data->{$e}->{var_info}->{$o_var}->{constant} [1,3,4] 
             # solo debo agregar 3 y 4
-            if ($origin_vars->{$o_var}) {
+            if (keys %{$origin_vars} && $origin_vars->{$o_var}) {
 
-                next unless ($init_data->{$e}->{var_info}->{$o_var}->{constant});# sino tengo constantes sigo
+                next unless ($init_data->{$e}->{var_info}->{$o_var} && @{$init_data->{$e}->{var_info}->{$o_var}->{constant}});# sino tengo constantes sigo
                 my @new_constants = @{$init_data->{$e}->{var_info}->{$o_var}->{constant}};
 
                 # recorro las nuevas constantes y me fijo si existe en origin_vars->{$o_vars}
@@ -104,8 +121,9 @@ sub resolve_internal_macro_node {
 
             }
             else {
-                # antes de agregar las constantes debo ver si c/u esta dentro del macronodo
-                if($init_data->{$e}->{var_info}->{$o_var}->{constant}) {
+                # antes de agregar las constantes debo ver si c/u esta dentro del macronodo;
+                if($init_data->{$e}->{var_info}->{$o_var} && @{$init_data->{$e}->{var_info}->{$o_var}->{constant}}) {
+
                     my @new_constants = @{$init_data->{$e}->{var_info}->{$o_var}->{constant}};
                     foreach my $nc (@new_constants) {
 
@@ -121,7 +139,7 @@ sub resolve_internal_macro_node {
 
                 }
                 else {
-                    $origin_vars->{$o_var} = '';
+                    $origin_vars->{$o_var} = [];
                 }
             }
         }
@@ -129,11 +147,11 @@ sub resolve_internal_macro_node {
 
     my $ordered_ran;
 
-    my $ordered_var_info;
+    my $ordered_var_info = {};
     # tomo cualquier ecuacion y me fijo si estan dentro de un loop
     # si una esta en un loop el resto tmb lo esta
     # en este caso tomo la 1er ecuacion para chequear
-    if ($init_data->{$equations[0]}->{ran}) {
+    if (keys %{$init_data->{$equations[0]}->{ran}}) {
         my $init;
         my $end;
         my $next;
@@ -144,7 +162,7 @@ sub resolve_internal_macro_node {
 
                 my $original_var = $graph->get_vertex_attribute($v, 'original_var');
 
-                my $ran_diff_index;
+                my $ran_diff_index = {};
 
                 if (defined $init_data->{$e}->{var_info}->{$original_var}) {
                     $ran_diff_index = $init_data->{$e}->{var_info}->{$original_var}->{ran};
@@ -153,7 +171,7 @@ sub resolve_internal_macro_node {
                 my $ran_eq = $init_data->{$e}->{ran}->{0};
                 
                 # si existe ran_diff_index signigica que la variable tiene indices distintos al del rango de la ecuacion
-                if ($ran_diff_index) {
+                if (keys %{$ran_diff_index}) {
 
                     # chequeo que los valores del rango sean o todos positivos o todos negativos
                     foreach my $index (keys %{$ran_diff_index}) {
@@ -250,10 +268,9 @@ sub resolve_internal_macro_node {
             my @eq_variables = keys($init_data->{$e}->{var_info});
             foreach my $v (@variables) {
                 
- 
-                my $original_var = $graph->get_vertex_attribute($v, 'original_var');
 
-                die "The ran of var:$v moust be null" if ($init_data->{$e}->{var_info}->{$original_var}->{ran});
+                my $original_var = $graph->get_vertex_attribute($v, 'original_var');
+                die "The ran of var:$v moust be null" if ($init_data->{$e}->{var_info}->{$original_var} && keys %{$init_data->{$e}->{var_info}->{$original_var}->{ran}});
 
                 my $is_var_in_m_n = 0;
                 foreach my $v1 (@eq_variables) {
@@ -279,26 +296,28 @@ sub resolve_internal_macro_node {
                 }
             }
         }
-
-        $ordered_ran = '';
+        $ordered_ran = {};
     }
 
-    my $ind;
+    my $ind={};
+
     foreach my $v (keys %{$ordered_var_info}) {
         $ind->{$v} = $graph_info->{index}->{$v};
     }
+
+    my $index = {};
+    $index = $ind if(keys %{$ordered_ran});
 
     my $ordered_graph = {
         equations  => \@equations,
         var_info   => $ordered_var_info,
         ran        => $ordered_ran,
-        index      => $ordered_ran ? $ind : ''
-    };warn Dumper($ordered_graph);
+        index      => $index
+    };
 
     return $ordered_graph;
 
 }
-
 
 # my $causalized = {
 #     ran        => {

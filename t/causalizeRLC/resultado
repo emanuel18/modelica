@@ -1,0 +1,112 @@
+
+# $data_rlcc2_original_pre_procesado_y_procesado
+# model RLCC2
+#   constant Integer N = 5;
+#   parameter Real R=1,L=1,C=1,Vs=1;
+#   Real Ir3[N], Il[N], Uc1[N], Ua[N], Ir1[N], Uc2[N];
+#   Real Vr, Ir;
+# equation
+#   L*der(Il[1]) = Vs - Ua[1];           (f1)
+#   C*der(Uc2[N]) = Ir3[N] - Ir;         (f2)
+
+######esto es cuando i es 1 del primer loop
+#     Ir1[1] = (Ua[1] - Uc1[1])/R;       (g11)  # saco Uc1[1]
+#     Ir3[1] = (Ua[1] - Uc2[1])/R;       (g21)  # saco Uc2[1]
+#     Il[1] = Ir1[i] + Ir3[1];           (g31)  # saco Il[1]
+#     C*der(Uc1[1]) = Ir1[1];            (g41)
+
+######esto es cuando i es N del primer loop
+#     Ir1[N] = (Ua[N] - Uc1[N])/R;       (g1N)  # saco Uc1[N]
+#     Ir3[N] = (Ua[N] - Uc2[N])/R;       (g2N)  # saco Uc2[N]
+#     Il[N] = Ir1[N] + Ir3[N];           (g3N)  # saco Il[N]
+#     C*der(Uc1[N]) = Ir1[N];            (g4N)
+
+#   for i in 2:N-1 loop
+#     Ir1[i] = (Ua[i] - Uc1[i])/R;       (g1i)  # saco Uc1[i]
+#     Ir3[i] = (Ua[i] - Uc2[i])/R;       (g2i)  # saco Uc2[i]
+#     Il[i] = Ir1[i] + Ir3[i];           (g3i)  # saco Il[i]
+#     C*der(Uc1[i]) = Ir1[i];            (g4i)
+#   end for;
+#   for i in 2:N-1 loop
+#     C*der(Uc2[i]) = Ir3[i] - Il[i+1];  (h1i)  # saco Il[i+1]
+#     L*der(Il[i+1]) = Uc2[i];           (h2i)  # saco Uc2[i]
+#   end for;
+
+######esto es cuando i es 1 del segunfo loop
+#     C*der(Uc2[1]) = Ir3[1] - Il[2];    (h11)  # saco Il[i+1]
+#     L*der(Il[2])  = Uc2[1];            (h21)  # saco Uc2[i]
+
+#   Vr = R*Ir;                           (k1)
+#   Uc2[N] = Vr;                         (k2)   # saco Uc2[N]
+# end RLCC2;
+
+////// Variables definidas: Il[i],Uc1[i],Uc2[i]
+//////// solucion con algoritmo de fede:
+
+  for i 2:5
+    L*der(Il[i]) = Uc2[i];
+  end
+  
+  Vr = Uc2[5];
+  Ir = Vr;
+  
+  for i 1:5
+    Ir1[i] = ( ((Il[i]*0.5)+(Uc1[i]*(-0.5) ) )+ (Uc2[i]*0.5) );
+    Ua[i] = (((Il[i]*0.5)+(Uc1[i]*0.5))+(Uc2[i]*0.5));
+    Ir3[i] = (((Il[i]*0.5)+(Uc1[i]*0.5))+(Uc2[i]*(-0.5)));
+  end;
+  
+  for i 1:4
+    C*der(Uc2[i]) = Ir3[i]-Il[i+1];
+  end
+
+  C*der(Uc2[5]) = Ir3[5]-Ir;
+  
+  for i 1:5
+    C*der(Uc1[i]) = Ir1[i];
+  end;
+  
+  L*der(Il[1]) = Vs-Ua[1];
+
+
+############es igual a:#######################
+
+
+  L*der(Il[2]) = Uc2[1];
+  L*der(Il[3]) = Uc2[2];
+  L*der(Il[4]) = Uc2[3];
+  L*der(Il[5]) = Uc2[4];
+  Vr = Uc2[5];
+  Ir = Vr;
+
+  Ir1[1] = (((Il[1]*0.5)+(Uc1[1]*(-0.5)))+(Uc2[1]*0.5));
+  Ua[1] = (((Il[1]*0.5)+(Uc1[1]*0.5))+(Uc2[1]*0.5));
+  Ir3[1] = (((Il[1]*0.5)+(Uc1[1]*0.5))+(Uc2[1]*(-0.5)));
+  Ua[2] = (((Il[2]*0.5)+(Uc1[2]*0.5))+(Uc2[2]*0.5));
+  Ir3[2] = (((Il[2]*0.5)+(Uc1[2]*0.5))+(Uc2[2]*(-0.5)));
+  Ir1[2] = (((Il[2]*0.5)+(Uc1[2]*(-0.5)))+(Uc2[2]*0.5));
+  Ir1[3] = (((Uc1[3]*(-0.5))+(Uc2[3]*0.5))+(Il[3]*0.5));
+  Ua[3] = (((Uc1[3]*0.5)+(Uc2[3]*0.5))+(Il[3]*0.5));
+  Ir3[3] = (((Uc1[3]*0.5)+(Uc2[3]*(-0.5)))+(Il[3]*0.5));
+  Ua[4] = (((Uc1[4]*0.5)+(Uc2[4]*0.5))+(Il[4]*0.5));
+  Ir3[4] = (((Uc1[4]*0.5)+(Uc2[4]*(-0.5)))+(Il[4]*0.5));
+  Ir1[4] = (((Uc1[4]*(-0.5))+(Uc2[4]*0.5))+(Il[4]*0.5));
+  Ir1[5] = (((Uc2[5]*0.5)+(Il[5]*0.5))+(Uc1[5]*(-0.5)));
+  Ua[5] = (((Uc2[5]*0.5)+(Il[5]*0.5))+(Uc1[5]*0.5));
+  Ir3[5] = (((Uc2[5]*(-0.5))+(Il[5]*0.5))+(Uc1[5]*0.5));
+
+  C*der(Uc2[5]) = Ir3[5]-Ir;
+
+  C*der(Uc2[4]) = Ir3[4]-Il[5];
+  C*der(Uc2[3]) = Ir3[3]-Il[4];
+  C*der(Uc2[2]) = Ir3[2]-Il[3];
+  C*der(Uc2[1]) = Ir3[1]-Il[2];
+
+  C*der(Uc1[5]) = Ir1[5];
+  C*der(Uc1[4]) = Ir1[4];
+  C*der(Uc1[3]) = Ir1[3];
+  C*der(Uc1[2]) = Ir1[2];
+  C*der(Uc1[1]) = Ir1[1];
+
+  L*der(Il[1]) = Vs-Ua[1];
+end RLC;

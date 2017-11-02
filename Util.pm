@@ -66,14 +66,10 @@ sub find_variable_in_graph {
     my $variable = shift;
     my $index = shift;
 
-    # warn "\tfind_variable_in_graph graph: " . Dumper($graph);
-    # warn "\tfind_variable_in_graph variable: " . Dumper($variable);
-    # warn "\tfind_variable_in_graph index: " . Dumper($index);
-
     my $var_info = $graph->{var_info};
 
     # el grafo tiene for y la info esta en rango
-    if ($graph->{ran}) {
+    if (keys %{$graph->{ran}}) {
         # warn "\tfind_variable_in_graph graph->{ran}: " . Dumper($graph->{ran});
         my $exist_var_in_eq_ran = 0;
         # me fijo si la variable esta dentro de las variables que tiene el rango del for
@@ -87,27 +83,21 @@ sub find_variable_in_graph {
         # debe tener indice xq estoy buscando en un grafo que tiene for
         # si busco c, no tiene indice y sale de aca retornando 0
         if ($exist_var_in_eq_ran && $index) {
-            # print "find_variable_in_graph: " . Dumper($graph->{ran}) . "\n";
-            # my $init = $graph->{ran}->{init}+$index;
+
             my $init = $graph->{ran}->{init};
             my $end  = $graph->{ran}->{end};
-            # my $end  = $graph->{ran}->{end}+$index;
-            # print "ARRAY ". Dumper($graph->{ran}) . "\n";
+
             my $min = ($init < $end ? $init : $end);
             my $max = ($init > $end ? $init : $end);
-            # print "min: $min max: $max index:$index\n";
 
             if ($index >= $min && $index <= $max) {
-                # print "$index >= $min $index <= $max\n";
                 return 1;
             } 
         }
     }
-    # warn "\tfind_variable_in_graph var_info: " . Dumper($var_info);
     # el grafo no tiene for la info esta las variables
-    # print "ref var_info: " . ref $var_info;
-    elsif ($graph->{ran} eq '') {
-        # warn "\tfind_variable_in_graph variable:$variable index:$index var_info: " . Dumper($var_info);
+    elsif (!keys %{$graph->{ran}}) {
+
         foreach my $var (keys %{$var_info}) {
             if ($var eq $variable) {
                 my $var_info_var = $var_info->{$var};
@@ -123,7 +113,6 @@ sub find_variable_in_graph {
                 }
 
                 foreach my $ar (@{$var_info_var}) {
-                    # print "HASH ar $ar index $index\n";
                     if ($ar eq $index) {
                         return 1;
                     }

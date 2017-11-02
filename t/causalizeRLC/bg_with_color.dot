@@ -1,0 +1,102 @@
+graph G{   
+        subgraph cluster0{
+        label = "Ecuaciones"; 
+        edge [style=invis];
+        h21 -- h2i -- g41 -- g11 -- g31 -- g21 -- h11 -- f1 -- g4i -- g1i -- g3i -- g2i -- h1i -- g4N -- g1N -- g3N -- g2N -- f2 -- k1 -- k2;
+        }
+        subgraph cluster1{
+        label = "Variables";
+        edge [style=invis];
+        "Il[2]" -- "Il[3:N]" -- "Uc1[1]" -- "Ir1[1]" -- "Ua[1]" -- "Ir3[1]" -- "Uc2[1]" -- "Il[1]" -- "Uc1[2:N-1]" -- "Ir1[2:N-1]" -- "Ua[2:N-1]" -- "Ir3[2:N-1]" -- "Uc2[2:N-1]" -- "Uc1[N]" -- "Ir1[N]" -- "Ua[N]" -- "Ir3[N]" -- "Uc2[N]" -- Ir -- Vr;
+        }
+        edge [constraint=false];
+        "Ir1[N]" -- g4N;
+        g2i -- "Ua[2:N-1]" ;
+        h11 -- "Ir3[1]";
+        h21 -- "Il[2]" ;
+        "Ir3[N]" -- f2;
+        "Ir3[N]" -- g3N ;
+        g21 -- "Ir3[1]" ;
+        g31 -- "Ir3[1]" ;
+        g4N -- "Uc1[N]" ;
+        "Uc1[1]" -- g41 ;
+        f1 -- "Ua[1]";
+        Ir -- f2;
+        "Ir3[2:N-1]" -- h1i;
+        k1 -- Ir ;
+        "Ir1[2:N-1]" -- g3i ;
+        "Ua[2:N-1]" -- g1i ;
+        h1i -- "Uc2[2:N-1]" ;
+        g41 -- "Ir1[1]";
+        f2 -- "Uc2[N]" ;
+        g2N -- "Ir3[N]" ;
+        h11 -- "Uc2[1]" ;
+        Vr -- k2 ;
+        k1 -- Vr;
+        g11 -- "Ir1[1]" ;
+        "Ua[N]" -- g1N ;
+        g11 -- "Ua[1]" ;
+        "Ir3[2:N-1]" -- g3i ;
+        g4i -- "Ir1[2:N-1]";
+        f1 -- "Il[1]" ;
+        g2N -- "Ua[N]" ;
+        g1N -- "Ir1[N]" ;
+        "Ir1[N]" -- g3N ;
+        "Ir1[2:N-1]" -- g1i ;
+        g21 -- "Ua[1]" ;
+        h2i -- "Il[3:N]" ;
+        g31 -- "Ir1[1]" ;
+        g2i -- "Ir3[2:N-1]" ;
+        g4i -- "Uc1[2:N-1]" ;
+
+
+        subgraph cluster2{
+        label = "Ecuaciones"; 
+        edge [style=invis];
+        h21 -- h2i -- g41 -- g11 -- g31 -- g21 -- h11 -- f1 -- g4i -- g1i -- g3i -- g2i -- h1i -- g4N -- g1N -- g3N -- g2N -- f2 -- k1 -- k2;
+        }
+        subgraph cluster3{
+        label = "Variables";
+        edge [style=invis];
+        "Il[2]" -- "Il[3:N]" -- "Uc1[1]" -- "Ir1[1]" -- "Ua[1]" -- "Ir3[1]" -- "Uc2[1]" -- "Il[1]" -- "Uc1[2:N-1]" -- "Ir1[2:N-1]" -- "Ua[2:N-1]" -- "Ir3[2:N-1]" -- "Uc2[2:N-1]" -- "Uc1[N]" -- "Ir1[N]" -- "Ua[N]" -- "Ir3[N]" -- "Uc2[N]" -- Ir -- Vr;
+        }
+        edge [constraint=false];
+        "Ir1[N]" -- g4N;
+        g2i -- "Ua[2:N-1]" [color=red];
+        h11 -- "Ir3[1]";
+        h21 -- "Il[2]" [color=blue];
+        "Ir3[N]" -- f2;
+        "Ir3[N]" -- g3N [color=red];
+        g21 -- "Ir3[1]" [color=red];
+        g31 -- "Ir3[1]" [color=red];
+        g4N -- "Uc1[N]" [color=blue];
+        "Uc1[1]" -- g41 [color=blue];
+        f1 -- "Ua[1]";
+        Ir -- f2;
+        "Ir3[2:N-1]" -- h1i;
+        k1 -- Ir [color=blue];
+        "Ir1[2:N-1]" -- g3i [color=red];
+        "Ua[2:N-1]" -- g1i [color=red];
+        h1i -- "Uc2[2:N-1]" [color=blue];
+        g41 -- "Ir1[1]";
+        f2 -- "Uc2[N]" [color=blue];
+        g2N -- "Ir3[N]" [color=red];
+        h11 -- "Uc2[1]" [color=blue];
+        Vr -- k2 [color=blue];
+        k1 -- Vr;
+        g11 -- "Ir1[1]" [color=red];
+        "Ua[N]" -- g1N [color=red];
+        g11 -- "Ua[1]" [color=red];
+        "Ir3[2:N-1]" -- g3i [color=red];
+        g4i -- "Ir1[2:N-1]";
+        f1 -- "Il[1]" [color=blue];
+        g2N -- "Ua[N]" [color=red];
+        g1N -- "Ir1[N]" [color=red];
+        "Ir1[N]" -- g3N [color=red];
+        "Ir1[2:N-1]" -- g1i [color=red];
+        g21 -- "Ua[1]" [color=red];
+        h2i -- "Il[3:N]" [color=blue];
+        g31 -- "Ir1[1]" [color=red];
+        g2i -- "Ir3[2:N-1]" [color=red];
+        g4i -- "Uc1[2:N-1]" [color=blue];
+}

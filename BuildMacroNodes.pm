@@ -3,8 +3,11 @@ package BuildMacroNodes;
 use strict;
 use warnings;
 use Data::Dumper;
-use Graph::Undirected;
+use Graph;
 use Params::Validate qw(:all);
+
+use constant DEBUG => 0;
+use BuildGraph qw(:all);
 
 use Exporter qw(import);
 our @EXPORT_OK = qw( build_macro_nodes );
@@ -32,6 +35,7 @@ sub build_macro_nodes {
     while (my @cycle_nodes = $graph->find_a_cycle) {
 
         @cycle_nodes = sort @cycle_nodes;
+        warn "cycle_nodes: " . @cycle_nodes if(DEBUG);
 
         my @mn_eq = ();
         my @mn_var = ();
@@ -116,12 +120,16 @@ sub build_macro_nodes {
         }
     }
 
-    # estos son los nodos que se puede causalizar
+    # these are the nodes that can be causalized
     my @vertices = $graph->vertices;
+    warn "vertices: " . Dumper(@vertices) if(DEBUG);
 
     while(@vertices) {
 
         foreach my $v (@vertices) {
+            warn "current vertice: $v degree: " . $graph->degree($v) if(DEBUG);
+            
+            die "Error: Node: $v degree: 0" if(defined $graph->degree($v) && $graph->degree($v) == 0);
 
             if ($graph->degree($v) && $graph->degree($v) == 1) {
 

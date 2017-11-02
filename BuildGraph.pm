@@ -3,13 +3,22 @@ use warnings;
 use Data::Dumper;
 use Graph::Undirected;
 use constant N => 10;
-use constant PATH_DOT => "/Users/emanuel/Documents/personal/facultad/causalize/bg.dot";
-use constant PATH_PNG => "/Users/emanuel/Documents/personal/facultad/causalize/bg.png";
+use constant PATH_DOT1 => '/Users/emanuel/Google\ Drive/personal/facultad/causalize/t/causalizeRLC/bg.dot';
+use constant PATH_PNG1 => '/Users/emanuel/Google\ Drive/personal/facultad/causalize/t/causalizeRLC/bg.png';
+use constant PATH_DOT => "/Users/emanuel/Google Drive/personal/facultad/causalize/t/causalizeRLC/bg.dot";
+
 use Scalar::Util 'looks_like_number';  
-use Exporter qw(import);
-our @EXPORT_OK = qw(build_graph build_png );
+
 use constant DEBUG => 0;
 use constant DEBUG1 => 0;
+use constant TYPE_VAR => 'VAR';
+use constant TYPE_EQ => 'EQ';
+
+use Exporter qw(import);
+our @EXPORT_OK = qw(build_graph build_png TYPE_VAR TYPE_EQ);
+our %EXPORT_TAGS = (
+    'all' => \@EXPORT_OK,
+);
 
 use Params::Validate qw(:all);
 
@@ -176,9 +185,9 @@ sub build_graph {
     };
 
     # armo el png del grafo
-    build_png($graph);
+    _build_png($graph);
 
-    return $data;
+    return $graph;
 }
 
 # este es el caso cuando el rango del for es vacio
@@ -187,14 +196,14 @@ sub _build_graph_without_for {
     my $graph = shift;
 
     foreach my $eq (keys %{$init_data}) {
-        next if($init_data->{$eq}->{ran} ne '');
+        next if(keys %{$init_data->{$eq}->{ran}});
 
         $graph->add_vertex( $eq );
         print "\t \$graph->add_vertex( \'$eq\' );\n" if DEBUG1;
 
         print "\n\n_build_graph_without_loop EQ: $eq \n" if DEBUG;
 
-        $graph->set_vertex_attribute($eq, 'type', 'EQ');
+        $graph->set_vertex_attribute($eq, 'type', TYPE_EQ);
         print "\t \$graph->set_vertex_attribute(\'$eq\', \'type\', \'EQ\');\n" if DEBUG1;
 
         my $var_info = $init_data->{$eq}->{var_info};
@@ -203,7 +212,7 @@ sub _build_graph_without_for {
 
             my $var_data = $init_data->{$eq}->{var_info}->{$var}->{constant};
 
-            if ( @$var_data ) {
+            if ( @{$var_data} ) {
                 foreach my $index (@{$var_data}) {
 
                     if ($index) {
@@ -248,10 +257,10 @@ sub _build_graph_without_for {
                 }
             }
             else { # este es el caso de c
-                my $new_var = $var;print "salgo por c";
+                my $new_var = $var;
 
                 $graph->add_vertex( $new_var );
-                $graph->set_vertex_attribute($new_var, 'type', 'VAR');
+                $graph->set_vertex_attribute($new_var, 'type', TYPE_VAR);
                 $graph->set_vertex_attribute($new_var, 'original_var', $var);
                 print "\t3without_loop var: $new_var\n" if DEBUG;
                 print "\t3without_loop add_edge: ($eq, $new_var)\n" if DEBUG;
@@ -276,7 +285,7 @@ sub _build_graph_with_for {
     my $get_var_index = {};
     my @vertices_to_delete;
     foreach my $eq (keys %{$init_data}) {
-        next if($init_data->{$eq}->{ran} eq '');
+        next unless(keys %{$init_data->{$eq}->{ran}});
 
         if ($graph->has_vertex($eq)) {
             die "The vertex eq $eq is already in the graph";
@@ -284,7 +293,7 @@ sub _build_graph_with_for {
         $graph->add_vertex( $eq );
         print "\t \$graph->add_vertex( \'$eq\' );\n" if DEBUG1;
 
-        $graph->set_vertex_attribute($eq, 'type', 'EQ');
+        $graph->set_vertex_attribute($eq, 'type', TYPE_EQ);
         print "\t \$graph->set_vertex_attribute(\'$eq\', \'type\', \'EQ\');\n" if DEBUG1;
 
         print "\n\n_build_graph_with_loop EQQQ: $eq \n" if DEBUG;  
@@ -323,9 +332,13 @@ sub _build_graph_with_for {
             # recorro los indices de la variable para ver cual indice debo usar
             # el resto de los indices son descartados lo cual significa que 
             # las variables con esos indices se resuelven en otro macro nodo
-            my $var_ran = $var_info->{$var}->{ran} || $init_data->{$eq}->{ran};
-
-            $graph_info->{index}->{$var} = 0 unless($var_ran);
+            my $var_ran;
+            if(keys %{$var_info->{$var}->{ran}}) {
+                $var_ran = $var_info->{$var}->{ran};
+            }
+            else {
+                $var_ran = $init_data->{$eq}->{ran};
+            }
 
             # en este foreach busco si hay algun indice que los dos extremos no esten en otro vertice
             my $has_index = 0;
@@ -342,10 +355,9 @@ sub _build_graph_with_for {
 
                     $graph->add_vertex( $new_var );
 
-                    $graph_info->{index}->{$var} = $var_index;
-
-                    $graph->set_vertex_attribute($new_var, 'type', 'VAR');
+                    $graph->set_vertex_attribute($new_var, 'type', TYPE_VAR);
                     $graph->set_vertex_attribute($new_var, 'original_var', $var);
+                    $graph->set_vertex_attribute($new_var, 'index_var', $var_index);
 
                     print "\t1with_loop var: $new_var\n" if DEBUG;
                     print "\t1with_loop add_edge: ($eq, $new_var)\n" if DEBUG;
@@ -368,8 +380,9 @@ sub _build_graph_with_for {
                     my $end  = $end_eq  + $var_index;
                     my $has_init_vertex = $graph->has_vertex("$var$init") || 0;
                     my $has_end_vertex = $graph->has_vertex("$var$end") || 0;
-
-                    if (!$has_init_vertex && !$has_end_vertex && !$has_index) {
+   
+                    if (!$has_init_vertex && !$has_end_vertex) {
+                    # if (!$has_init_vertex && !$has_end_vertex && !$has_index) {
 
                         my $init_var_in_cycle = 0;
                         my $graph_tmp = $graph->copy_graph;
@@ -391,10 +404,9 @@ sub _build_graph_with_for {
                             $new_var .= $init;
                             $new_var .= "to$end" if ($init != $end); 
 
-                            $graph_info->{index}->{$var} = $var_index;
-
-                            $graph->set_vertex_attribute($new_var, 'type', 'VAR');
+                            $graph->set_vertex_attribute($new_var, 'type', TYPE_VAR);
                             $graph->set_vertex_attribute($new_var, 'original_var', $var);
+                            $graph->set_vertex_attribute($new_var, 'index_var', $var_index);
 
                             print "\t \$graph->set_vertex_attribute(\'$new_var\', \'type\', \'VAR\');\n" if DEBUG1;
                             print "\t \$graph->set_vertex_attribute(\'$new_var\', \'original_var\', \'$var\');\n" if DEBUG1;
@@ -415,7 +427,8 @@ sub _build_graph_with_for {
                         }
                     }
 
-                    if (!$has_init_vertex && $has_end_vertex && !$has_index) {
+                    if (!$has_init_vertex && $has_end_vertex) {
+                    # if (!$has_init_vertex && $has_end_vertex && !$has_index) {
 
                         my $init_var_in_cycle = 0;
                         my $graph_tmp = $graph->copy_graph;
@@ -438,10 +451,9 @@ sub _build_graph_with_for {
 
                             $graph->add_vertex( $new_var );
 
-                            $graph_info->{index}->{$var} = $var_index;
-
-                            $graph->set_vertex_attribute($new_var, 'type', 'VAR');
+                            $graph->set_vertex_attribute($new_var, 'type', TYPE_VAR);
                             $graph->set_vertex_attribute($new_var, 'original_var', $var);
+                            $graph->set_vertex_attribute($new_var, 'index_var', $var_index);
 
                             print "\t \$graph->set_vertex_attribute(\'$new_var\', \'type\', \'VAR\');\n" if DEBUG1;
                             print "\t \$graph->set_vertex_attribute(\'$new_var\', \'original_var\', \'$var\');\n" if DEBUG1;
@@ -465,14 +477,14 @@ sub _build_graph_with_for {
             # ahora analizo las contantes que puede tener cada variable dentro del for
             my $constants = $var_info->{$var}->{constant};
 
-            next unless($constants);
+            next unless(@{$constants});
 
             foreach my $c (@{$constants}) {
                 $new_var = $var . $c;
 
                 $graph->add_vertex( $new_var );
 
-                $graph->set_vertex_attribute($new_var, 'type', 'VAR');
+                $graph->set_vertex_attribute($new_var, 'type', TYPE_VAR);
                 $graph->set_vertex_attribute($new_var, 'original_var', $var);    
 
                 print "\t \$graph->set_vertex_attribute(\'$new_var\', \'type\', \'VAR\');\n" if DEBUG1;
@@ -494,7 +506,7 @@ sub _build_graph_with_for {
     $graph = $graph->delete_vertices(@vertices_to_delete);
 }
 
-sub build_png {
+sub _build_png {
     my $graph = shift;
 
     my $g = "graph G{   
@@ -510,7 +522,7 @@ sub build_png {
     foreach my $node (@all_nodes) {
 
         die "Node:$node is not defined" unless($graph->get_vertex_attribute($node, 'type'));
-        if ($graph->get_vertex_attribute($node, 'type') eq 'EQ') {
+        if ($graph->get_vertex_attribute($node, 'type') eq TYPE_EQ) {
             push @ec, $node;
         } else {
             push @var, $node;
@@ -545,9 +557,11 @@ sub build_png {
     print $output_file $g;
     close $output_file;
 
-    my $command = "dot -Tpng " . PATH_DOT . " -o " . PATH_PNG;
+    my $command = "dot -Tpng " . PATH_DOT1 . " -o " . PATH_PNG1;
 
     my $output = `$command 2>&1`;
+
+    die $output if($output);
 }
 
 1;

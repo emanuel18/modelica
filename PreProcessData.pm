@@ -3,12 +3,12 @@ use warnings;
 use Data::Dumper;
 
 use Exporter qw(import);
-our @EXPORT_OK = qw( pre_process_data );
+our @EXPORT_OK = qw( check_and_transform_data );
 our %EXPORT_TAGS = (
     'all' => \@EXPORT_OK,
 );
 
-
+## division del rango del for
 ## f:10 a 20 - g: 10 a 30 - h:1 a 20  
 ## f:              10--------20
 ## g:              10---------------------30
@@ -22,15 +22,16 @@ our %EXPORT_TAGS = (
 ##      1<------>9 10<------->20 21<------>30
 ##      
 
-
-sub pre_process_data {
+sub check_and_transform_data {
     my $init_data = shift;
 
     my $needs_modification = 0;
     my $data = {};
     foreach my $eq (keys %{$init_data}) {
-        if($init_data->{$eq}->{ran} and $needs_modification == 0) {
+        if(keys %{$init_data->{$eq}->{ran}} and $needs_modification == 0) {
             my ($init_eq,$end_eq);
+
+            die "Wrong rang" unless($init_data->{$eq}->{ran}->{0});
 
             $init_eq = $init_data->{$eq}->{ran}->{0}->{init};
             $end_eq  = $init_data->{$eq}->{ran}->{0}->{end};
@@ -79,16 +80,27 @@ sub pre_process_data {
 
     warn "The init data must be modified!!\n";
 
+    split_ran($init_data);
+
+    # chequeo que todo haya quedado bien
+    check_ran($init_data);
+}
+
+sub split_ran {
+    my $init_data = shift;
+
     my $all_ran = _get_all_ran($init_data);
 
     my @keys_init_data = keys %{$init_data};
     foreach my $eq (@keys_init_data) {
-        if($init_data->{$eq}->{ran}) {
+        if(keys %{$init_data->{$eq}->{ran}}) {
             my @ran_keys = sort(keys %{$all_ran});
 
             foreach my $k (@ran_keys) {
                 my $min_index_ran = $all_ran->{$k}->{min};
                 my $max_index_ran = $all_ran->{$k}->{max};
+                # print "min_index_ran: $min_index_ran";
+                # print "max_index_ran: $max_index_ran";
 
                 my ($init_eq,$end_eq);
 
@@ -98,18 +110,18 @@ sub pre_process_data {
                 if($min_index_ran>=$init_eq and $max_index_ran <= $end_eq) {
                     if($min_index_ran == $max_index_ran) {
 
-                        $init_data->{"$eq$min_index_ran"}->{ran} = "";
+                        $init_data->{"$eq$min_index_ran"}->{ran} = {};
 
-                            $init_data->{"$eq$min_index_ran"}->{ran} = "";
+                            $init_data->{"$eq$min_index_ran"}->{ran} = {};
 
                             foreach my $var (keys %{$init_data->{$eq}->{var_info}}) {
 
 
                                 my $ran_index = $init_data->{$eq}->{var_info}->{$var}->{ran};
-                                $ran_index = $init_data->{$eq}->{ran} unless ($ran_index);
+                                $ran_index = $init_data->{$eq}->{ran} unless (keys %{$ran_index});
 
                                 my @constant = ();
-                                @constant = @{$init_data->{$eq}->{var_info}->{$var}->{constant}} if ($init_data->{$eq}->{var_info}->{$var}->{constant});
+                                @constant = @{$init_data->{$eq}->{var_info}->{$var}->{constant}} if (@{$init_data->{$eq}->{var_info}->{$var}->{constant}});
 
                                 foreach my $index (keys %{$ran_index}) {
                                     my $new_index = $min_index_ran + $index;
@@ -118,27 +130,31 @@ sub pre_process_data {
 
                                 # esta es la nueva ecuacion
                                 $init_data->{"$eq$min_index_ran"}->{var_info}->{$var} = {
-                                    ran      => "",
+                                    ran      => {},
                                     constant => \@constant
                                 };
                             }
                     } 
                     else {
-                        my $new_var_info;
+                        my $new_var_info={};
                         foreach my $var (keys %{$init_data->{$eq}->{var_info}}) {
                             
-                            unless($init_data->{$eq}->{var_info}->{$var}->{ran}) {
+                            unless(keys %{$init_data->{$eq}->{var_info}->{$var}->{ran}}) {
                                 $new_var_info = $init_data->{$eq}->{var_info};
                                 next;
                             }
                             my @index_keys = keys %{$init_data->{$eq}->{var_info}->{$var}->{ran}};
+                            # warn "index_keys var$var:". Dumper(@index_keys);
                             foreach my $index (@index_keys) {
                                 $new_var_info->{$var}->{ran}->{$index} = {
                                     init => $min_index_ran+$index,
                                     end  => $max_index_ran+$index
                                 };
                             }
-                            $new_var_info->{$var}->{constant} = $init_data->{$eq}->{var_info}->{$var}->{constant} || '';
+                            $new_var_info->{$var}->{constant} = [];
+                            if(keys %{$init_data->{$eq}->{var_info}->{$var}}) {
+                                $new_var_info->{$var}->{constant} = $init_data->{$eq}->{var_info}->{$var}->{constant};
+                            }
                         }
                         my $init_data_int = {
                                 ran      => {
@@ -148,7 +164,7 @@ sub pre_process_data {
                                         vars => $init_data->{$eq}->{ran}->{0}->{vars}
                                     }
                                 },
-                                var_info => $new_var_info || ""
+                                var_info => $new_var_info
                         };
                         $init_data->{"$eq$min_index_ran$max_index_ran"} = $init_data_int;
                     }
@@ -157,8 +173,6 @@ sub pre_process_data {
             delete $init_data->{$eq};
         }
     }
-    # chequeo que todo haya quedado bien
-    check_ran($init_data);
 }
 
 sub _get_all_ran {
@@ -169,7 +183,7 @@ sub _get_all_ran {
 
     # busco el minimo y maximo valor de todos los rangos
     foreach my $eq (keys %{$data}) {
-        if($data->{$eq}->{ran}) {
+        if(keys %{$data->{$eq}->{ran}}) {
             my ($init_eq,$end_eq);
             $init_eq = $data->{$eq}->{ran}->{0}->{init};
             $end_eq  = $data->{$eq}->{ran}->{0}->{end};
@@ -200,6 +214,9 @@ sub _get_all_ran {
     my $next_min_index_ran = $min_index_ran;
     my $next_max_index_ran = $max_index_ran;
 
+    # print "min_index_ran:$min_index_ran";    
+    # print "max_index_ran:$max_index_ran";    
+
     my $i=1;
     my $find_ran = 1;
     while($find_ran) {
@@ -207,10 +224,13 @@ sub _get_all_ran {
         
         foreach my $eq (keys %{$data}) {
 
-            if($data->{$eq}->{ran}) {
+            if(keys %{$data->{$eq}->{ran}}) {
                 my ($init_eq,$end_eq);
                 $init_eq = $data->{$eq}->{ran}->{0}->{init};
                 $end_eq  = $data->{$eq}->{ran}->{0}->{end};
+
+                # print "init_eq:$init_eq";    
+                # print "end_eq:$end_eq";  
 
                 if ($init_eq > $end_eq) {
                     my $tmp  = $init_eq;
@@ -218,6 +238,12 @@ sub _get_all_ran {
                     $end_eq  = $tmp;
                 }
                 
+                # print "init_eq:$init_eq";    
+                # print "end_eq:$end_eq";  
+
+                # print "next_max_index_ran:$next_max_index_ran";    
+                # print "next_min_index_ran:$next_min_index_ran"; 
+
                 # el indice de next_max_index_ran debe ser mayor a next_min_index_ran 
                 # y mayor al anterior rango guardado
                 if($init_eq < $next_max_index_ran and $init_eq > $next_min_index_ran) {
@@ -234,7 +260,7 @@ sub _get_all_ran {
         # me fijo si hay algun rango que sea igual al que tengo si es asi dejo ese
         # si tengo 10 a 20 y esta ese rango lo dejo, sino va de 10 a 19
         foreach my $eq (keys %{$data}) {
-            if($data->{$eq}->{ran}) {
+            if(keys %{$data->{$eq}->{ran}}) {
                 my ($init_eq,$end_eq);
                 $init_eq = $data->{$eq}->{ran}->{0}->{init};
                 $end_eq  = $data->{$eq}->{ran}->{0}->{end};
@@ -267,7 +293,7 @@ sub check_ran {
 
     my ($init_eq,$end_eq);
     foreach my $eq (keys %{$init_data}) {
-        if($init_data->{$eq}->{ran}) {
+        if(keys %{$init_data->{$eq}->{ran}}) {
             unless($init_eq && $end_eq) {
                 $init_eq = $init_data->{$eq}->{ran}->{0}->{init};
                 $end_eq  = $init_data->{$eq}->{ran}->{0}->{end};
@@ -276,7 +302,7 @@ sub check_ran {
             my $init = $init_data->{$eq}->{ran}->{0}->{init};
             my $end = $init_data->{$eq}->{ran}->{0}->{end};
 
-            if($init_eq ne $init or $end_eq ne $end) {
+            if(($init_eq eq $init && $end_eq ne $end) || ($init_eq ne $init && $end_eq eq $end) ) {
                 die "Wrong equation range";
             }
         }

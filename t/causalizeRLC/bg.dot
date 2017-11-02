@@ -1,0 +1,22 @@
+graph G{   
+        subgraph cluster0{
+        label = "Ecuaciones"; 
+        edge [style=invis];
+        fi -- gi -- h1 -- h2 -- h3 -- h4;
+        }
+        subgraph cluster1{
+        label = "Variables";
+        edge [style=invis];
+        a100 -- a1to99 -- b100 -- b1to99 -- c -- d;
+        }
+        edge [constraint=false];
+        b1to99 -- fi;
+        h4 -- d;
+        gi -- a1to99;
+        b1to99 -- gi;
+        fi -- a1to99;
+        h2 -- b100;
+        h3 -- c;
+        d -- h1;
+        h1 -- a100;
+}

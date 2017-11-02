@@ -33,7 +33,7 @@ sub get_vars_solved_in_other_mn {
         foreach my $eq (@{$mn->{equations}}) {
 
             # esta dentro de un loop
-            if($init_data->{$eq}->{ran}) {
+            if(keys %{$init_data->{$eq}->{ran}}) {
 
                 # miro cada una de las variables
                 foreach my $var (keys %{$init_data->{$eq}->{var_info}}) {
@@ -53,29 +53,29 @@ sub get_vars_solved_in_other_mn {
                     # o es una constante c
                     unless($var_is_in_ran) {
                         # si la variable no es parte del rango de la ecuacion debe tener su ran vacio
-                        die "The ran of the var:$var must be null" if($init_data->{$eq}->{var_info}->{$var}->{ran});
+                        die "The ran of the var:$var must be null" if(keys %{$init_data->{$eq}->{var_info}->{$var}->{ran}});
 
                         unless(defined $mn->{var_info}->{$var}) {
-                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = '';
-                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} || '';
+                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = {};
+                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} || [];
                             next;
                         }
                     }
  
                     my $var_ran = $init_data->{$eq}->{var_info}->{$var}->{ran};
-                    $var_ran = $init_data->{$eq}->{ran} unless($var_ran);
+                    $var_ran = $init_data->{$eq}->{ran} unless(keys %{$var_ran});
 
                     # si la variable no esta como indice en el macro nodo significa 
                     # que dicha variable debe ser completamente resuelta en otro mn
                     unless(defined $mn->{index}->{$var}) {
                         $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = $var_ran;
-                        $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = '' unless(defined $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant});
+                        $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = [] unless($mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant});
                         next;
                     }
   
                     # recorro los indices de la variables original a ver cual indice NO esta
                     # incluido en el macronodo
-                    if ($var_ran) {
+                    if (keys %{$var_ran}) {
 
                         my @index = keys %{$var_ran};
                     
@@ -87,21 +87,21 @@ sub get_vars_solved_in_other_mn {
                                 # si es 0 tiene el rango de la ecuacion
                                 if ($i == 0) {
                                     $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = $init_data->{$eq}->{ran};
-                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = '' unless(defined $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant});
+                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = [] unless($mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant});
                                 } 
                                 else {
                                     $mn->{var_solved_in_other_mn}->{$eq}->{$var} = {
                                       ran => {
                                         $i => $init_data->{$eq}->{var_info}->{$var}->{ran}->{$i},
                                       },
-                                      constant => ""
+                                      constant => []
                                     };
                                 }
                             }
                         }
                     }
                     # ahora chequeo las constantes que estan dentro de la ecuacion del loop
-                    if ($init_data->{$eq}->{var_info}->{$var}->{constant}) {
+                    if (@{$init_data->{$eq}->{var_info}->{$var}->{constant}}) {
                         my @constant = @{$init_data->{$eq}->{var_info}->{$var}->{constant}};
 
                         if(@constant) {
@@ -110,7 +110,7 @@ sub get_vars_solved_in_other_mn {
 
                                 my $exist = 0;
 
-                                if($mn->{var_info}->{$var}) {
+                                if(keys %{$mn->{var_info}} && $mn->{var_info}->{$var}) {
                                     my @constant_internal_mn = @{$mn->{var_info}->{$var}};
                                     foreach my $c_internal_mn (@constant_internal_mn) {
                                         if($c_init_data eq $c_internal_mn) {
@@ -122,7 +122,7 @@ sub get_vars_solved_in_other_mn {
 
                                 if($exist == 0) {
                                     push @{$mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant}}, $c_init_data;
-                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = '' unless(defined $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran});
+                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = {} unless(keys %{$mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran}});
                                 }
                             }
                         }
@@ -133,10 +133,10 @@ sub get_vars_solved_in_other_mn {
             else {
                 foreach my $var (keys %{$init_data->{$eq}->{var_info}}) { 
   
-                    die "The ran of eq:$eq var:$var moust be null" if ($init_data->{$eq}->{var_info}->{$var}->{ran});
-
+                    die "The ran of eq:$eq var:$var moust be null" if (keys %{$init_data->{$eq}->{var_info}->{$var}->{ran}});
+                    # warn "eq $eq var $var :" . Dumper($init_data->{$eq});
                     # son constantes que pertenecen a un arreglo, a[1], a[2]
-                    if ($init_data->{$eq}->{var_info}->{$var}->{constant}) {
+                    if ($init_data->{$eq}->{var_info}->{$var} && @{$init_data->{$eq}->{var_info}->{$var}->{constant}}) {
                         my @constant = @{$init_data->{$eq}->{var_info}->{$var}->{constant}};
 
                         if(@constant) {
@@ -158,7 +158,7 @@ sub get_vars_solved_in_other_mn {
 
                                 if($exist == 0) {
                                     push @{$mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant}}, $c_init_data;
-                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = '' unless(defined $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran});
+                                    $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = {} unless(keys %{$mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran}});
                                 }
                             }
                         }
@@ -176,8 +176,8 @@ sub get_vars_solved_in_other_mn {
                             }
                         }
                         if($exist == 0) {
-                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = '';
-                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = '' unless(defined $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran});
+                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{constant} = [];
+                            $mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran} = {} unless(keys %{$mn->{var_solved_in_other_mn}->{$eq}->{$var}->{ran}});
                         }
                     }
                 }
