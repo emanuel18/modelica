@@ -1,0 +1,110 @@
+Algoritmo correspondiente a la etapa de causalización perteneciente a la tesina:
+
+    Resolución Eficiente de Lazos Algebraicos en Grandes Sistemas Dinámicos
+    Licenciatura en Ciencias de la Computación
+    Autor: Emanuel Soria
+    Director: Federico Bergero
+    Co-Director: Ernesto Kofman
+
+Dicho algoritmo debe recibir como entrada un hash compuesto por ecuaciones y variables como se puede ver en el ejemplo siguiente.
+
+Ejemplo:
+model Ejemplo
+ a[N], b[N]
+ for i in 2:N loop
+   a[i]*b[i]=8;          //fi
+   a[i]+b[i]*b[i-1]=20;  //gi
+ end for;
+
+ a[1]*b[1]=8;            //f1
+ a[1]+b[1]=20;           //g1
+end Ejemplo;
+
+our $example = {
+    fi => {
+        ran => { # rango del for
+            0 => {
+                init => 2,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => {},
+                constant => []
+            },
+            b => {
+                ran      => {},
+                constant => []
+            }
+        }, 
+    },
+    gi => {
+        ran => {
+            0 => {
+                init => 2,
+                end  => N,
+                vars => ['a','b']
+            }
+        },
+        var_info => {
+            a => {
+                ran      => {},
+                constant => []
+            },
+            b => {
+                ran   => {
+                    0 => {
+                        init => 2,
+                        end  => N,
+                    },
+                    -1 => {
+                        init => 1,
+                        end  => N-1,
+                    }
+                },
+                constant => []
+            }
+        }, 
+    },
+    f1 => {
+        ran => {},
+        var_info => {
+            a => {
+                ran      => {},
+                constant => [1]
+            },
+            b => {
+                ran      => {},
+                constant => [1]
+            }
+        }
+    },
+    g1 => {
+        ran => {},
+        var_info => {
+            a => {
+                ran      => {},
+                constant => [1]
+            },
+            b => {
+                ran      => {},
+                constant => [1]
+            }
+        }
+    }
+};
+
+Tener en cuenta que para que funcione se deben cambiar dentro de Causalize.pm y ProcessInternalMacroNodes.pm el código
+use lib "/Users/emanuel/Google Drive/personal/facultad/causalize";
+por el correspondiente directorio.
+
+La ubicación del grafo bipartito será la definida por la constante PATH_DOT, PATH_DOT1 y PATH_PNG1 (en las dos últimas constantes se deben escapar los espacios) dentro del módulo BuildGraph.
+
+Para correr el algoritmo debe llamar a la función causalize perteneciente el módulo Causalize.pm con la correspondiente estructura. 
+Ej: $resultado = causalize($example);
+
+Para correr los test del algoritmo se debe ejecutar en un terminal:
+perl t/Causalize.t
+
